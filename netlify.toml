@@ -1,8 +1,11 @@
 [build]
-command = "npm run build"
+command = "yarn build"
 publish = "build"
 
+[functions]
+directory = "netlify/functions"
+
 [[redirects]]
-from = "/.netlify/functions/*"
+from = "/*"
 to = "/.netlify/functions/:splat"
 status = 200
