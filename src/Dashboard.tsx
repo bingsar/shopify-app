@@ -20,17 +20,18 @@ const Dashboard = () => {
         <Page title="Dashboard">
                 <Layout.Section>
                     <Card>
-                        <TextField
-                            label="Trillion API Key"
-                            value={apiKey}
-                            onChange={(value) => setApiKey(value)}
-                            autoComplete="off"
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                            <TextField
+                                label="Trillion API Key"
+                                value={apiKey}
+                                onChange={(value) => setApiKey(value)}
+                                autoComplete="off"
 
-                        />
-                        <br/>
-                        <Button onClick={handleSaveApiKey}>
-                            Save API Key
-                        </Button>
+                            />
+                            <Button onClick={handleSaveApiKey}>
+                                Save API Key
+                            </Button>
+                        </div>
                     </Card>
                 </Layout.Section>
         </Page>
