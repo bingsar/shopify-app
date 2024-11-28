@@ -5,7 +5,7 @@ import { AppProvider } from '@shopify/polaris';
 import '@shopify/polaris/build/esm/styles.css';
 
 ReactDOM.render(
-    <AppProvider>
+    <AppProvider i18n={{}}>
         <App />
     </AppProvider>,
     document.getElementById('root')
