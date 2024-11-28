@@ -5,6 +5,7 @@ import { createClient } from '@supabase/supabase-js';
 
 const API_KEY = process.env.SHOPIFY_API_KEY || '';
 const API_SECRET = process.env.SHOPIFY_API_SECRET || '';
+const APP_NAME = process.env.SHOPIFY_APP_NAME || '';
 const SUPABASE_URL = process.env.SUPABASE_URL || '';
 const SUPABASE_KEY = process.env.SUPABASE_KEY || '';
 
@@ -85,7 +86,7 @@ export const handler: Handler = async (event) => {
             return {
                 statusCode: 302,
                 headers: {
-                    Location: `https://testious-app.netlify.app/dashboard?shop=${shop}`,
+                    Location: `https://admin.shopify.com/store/${shop}/apps/${APP_NAME}`,
                 },
             };
         } else {

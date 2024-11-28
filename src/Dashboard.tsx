@@ -7,20 +7,38 @@ const Dashboard = () => {
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
-        const shop = urlParams.get('shop');
-        setShop(shop);
+        const shopFromUrl = urlParams.get('shop');
+        if (shopFromUrl) {
+            setShop(shopFromUrl);
+        } else {
+            fetch('/.netlify/functions/getShop')
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch shop');
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    if (data.shop) {
+                        setShop(data.shop);
+                    }
+                })
+                .catch((err) => {
+                    console.error('Error fetching shop:', err);
+                });
+        }
     }, []);
 
     const handleSaveApiKey = () => {
-        // Logic to save API Key in your Supabase or API backend
         console.log('API Key:', apiKey);
     };
 
     return (
         <Page title="Dashboard">
                 <Layout.Section>
+                    <div style={{display: 'grid', gap: '20px'}}>
                     <Card>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                        <div>
                             <TextField
                                 label="Trillion API Key"
                                 value={apiKey}
@@ -28,11 +46,18 @@ const Dashboard = () => {
                                 autoComplete="off"
 
                             />
-                            <Button onClick={handleSaveApiKey}>
+                            <br/>
+                            <Button variant={'primary'} fullWidth={false} onClick={handleSaveApiKey}>
                                 Save API Key
                             </Button>
                         </div>
                     </Card>
+                    {shop &&
+                        <Card>
+                            {shop}
+                        </Card>
+                    }
+                    </div>
                 </Layout.Section>
         </Page>
     );
