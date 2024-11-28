@@ -17,7 +17,6 @@ export const handler: Handler = async (event) => {
             };
         }
 
-        // Step 1: Fetch the access_token from Supabase
         const { data, error } = await supabase
             .from('stores')
             .select('access_token')
@@ -34,7 +33,6 @@ export const handler: Handler = async (event) => {
 
         const SHOPIFY_ACCESS_TOKEN = data.access_token;
 
-        // Step 2: Fetch themes
         const API_BASE = `https://${shop}/admin/api/2023-01`;
         const themesResponse = await fetch(`${API_BASE}/themes.json`, {
             method: 'GET',
@@ -56,12 +54,10 @@ export const handler: Handler = async (event) => {
         const themesData = await themesResponse.json();
         console.log('Themes Data:', themesData);
 
-        // Step 3: Ensure themes data is valid
         if (!themesData || !Array.isArray(themesData.themes)) {
             throw new Error('Invalid themes data: themes array is missing.');
         }
 
-        // Step 4: Find the active theme
         const activeTheme = themesData.themes.find((theme: any) => theme.role === 'main');
         if (!activeTheme) {
             throw new Error('Active theme not found.');
@@ -70,10 +66,8 @@ export const handler: Handler = async (event) => {
         const themeId = activeTheme.id;
         console.log('Active Theme ID:', themeId);
 
-        // Step 5: Generate the template content
         const templateContent = getTrillionTryonContent(apiKey);
 
-        // Step 6: Upload the template
         const uploadTemplateResponse = await fetch(
             `${API_BASE}/themes/${themeId}/assets.json`,
             {
@@ -99,7 +93,6 @@ export const handler: Handler = async (event) => {
             };
         }
 
-        // Step 7: Save the API key to Supabase
         const { error: saveError } = await supabase
             .from('stores')
             .update({ trillion_api_key: apiKey })
