@@ -20,13 +20,13 @@ const Dashboard = () => {
         <Page title="Dashboard">
             <Layout>
                 <Layout.Section>
-                    <Card sectioned>
+                    <Card>
                         <TextField
                             label="Trillion API Key"
                             value={apiKey}
                             onChange={(value) => setApiKey(value)}
                         />
-                        <Button onClick={handleSaveApiKey} primary>
+                        <Button onClick={handleSaveApiKey}>
                             Save API Key
                         </Button>
                     </Card>
