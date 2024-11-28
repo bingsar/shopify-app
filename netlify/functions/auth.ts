@@ -83,10 +83,11 @@ export const handler: Handler = async (event) => {
             }
 
             console.log(`Successfully saved shop ${shop} in database.`);
+            const shopName = shop.replace('.myshopify.com', '');
             return {
                 statusCode: 302,
                 headers: {
-                    Location: `https://admin.shopify.com/store/${shop}/apps/${APP_NAME}`,
+                    Location: `https://admin.shopify.com/store/${shopName}/apps/${APP_NAME}`,
                 },
             };
         } else {
