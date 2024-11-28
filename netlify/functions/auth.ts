@@ -1,5 +1,6 @@
 import { Handler } from '@netlify/functions';
 import fetch from 'node-fetch';
+import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 
 const API_KEY = process.env.SHOPIFY_API_KEY || '';
@@ -9,6 +10,21 @@ const SUPABASE_KEY = process.env.SUPABASE_KEY || '';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+const validateHmac = (params: Record<string, string>, hmac: string): boolean => {
+    const { hmac: _, ...rest } = params;
+    const message = Object.keys(rest)
+        .sort()
+        .map((key) => `${key}=${rest[key]}`)
+        .join('&');
+
+    const generatedHmac = crypto
+        .createHmac('sha256', API_SECRET)
+        .update(message)
+        .digest('hex');
+
+    return generatedHmac === hmac;
+};
+
 export const handler: Handler = async (event) => {
     const { queryStringParameters } = event;
     const { shop, code, hmac } = queryStringParameters || {};
@@ -17,6 +33,14 @@ export const handler: Handler = async (event) => {
         return {
             statusCode: 400,
             body: 'Missing required parameters',
+        };
+    }
+
+    // Validate HMAC
+    if (!validateHmac(queryStringParameters, hmac)) {
+        return {
+            statusCode: 403,
+            body: 'HMAC validation failed',
         };
     }
 
@@ -38,7 +62,6 @@ export const handler: Handler = async (event) => {
         const data = await response.json();
 
         if (response.ok) {
-            // Save access token and shop in Supabase
             const { error } = await supabase
                 .from('stores')
                 .upsert(
@@ -47,7 +70,7 @@ export const handler: Handler = async (event) => {
                         access_token: data.access_token,
                         installed_at: new Date().toISOString(),
                     },
-                    { onConflict: 'shop_domain' } // Ensures shop_domain is unique
+                    { onConflict: 'shop_domain' }
                 );
 
             if (error) {
@@ -58,14 +81,16 @@ export const handler: Handler = async (event) => {
                 };
             }
 
+            console.log(`Successfully saved shop ${shop} in database.`);
             return {
                 statusCode: 200,
-                body: 'App installed successfully!',
+                body: JSON.stringify({ message: 'App installed successfully!', shop }),
             };
         } else {
+            console.error('Failed to exchange access token:', data);
             return {
                 statusCode: 400,
-                body: JSON.stringify(data),
+                body: `Error exchanging access token: ${data.error_description || 'Unknown error'}`,
             };
         }
     } catch (error) {
