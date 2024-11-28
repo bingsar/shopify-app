@@ -18,7 +18,6 @@ const Dashboard = () => {
 
     return (
         <Page title="Dashboard">
-            <div>
                 <Layout.Section>
                     <Card>
                         <TextField
@@ -26,13 +25,14 @@ const Dashboard = () => {
                             value={apiKey}
                             onChange={(value) => setApiKey(value)}
                             autoComplete="off"
+
                         />
+                        <br/>
                         <Button onClick={handleSaveApiKey}>
                             Save API Key
                         </Button>
                     </Card>
                 </Layout.Section>
-            </div>
         </Page>
     );
 };
