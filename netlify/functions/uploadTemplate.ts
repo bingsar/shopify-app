@@ -41,7 +41,7 @@ export const handler: Handler = async (event) => {
         console.log('Access token:', SHOPIFY_ACCESS_TOKEN);
 
         // Fetch themes from Shopify
-        const API_BASE = `https://${shop}/admin/api/2023-01`;
+        const API_BASE = `https://${shop}/admin/api/2024-10`;
         const themesResponse = await fetch(`${API_BASE}/themes.json`, {
             method: 'GET',
             headers: {
