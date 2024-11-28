@@ -18,7 +18,7 @@ const Dashboard = () => {
 
     return (
         <Page title="Dashboard">
-            <Layout>
+            <div>
                 <Layout.Section>
                     <Card>
                         <TextField
@@ -32,7 +32,7 @@ const Dashboard = () => {
                         </Button>
                     </Card>
                 </Layout.Section>
-            </Layout>
+            </div>
         </Page>
     );
 };
