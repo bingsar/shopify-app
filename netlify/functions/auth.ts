@@ -83,8 +83,10 @@ export const handler: Handler = async (event) => {
 
             console.log(`Successfully saved shop ${shop} in database.`);
             return {
-                statusCode: 200,
-                body: JSON.stringify({ message: 'App installed successfully!', shop }),
+                statusCode: 302,
+                headers: {
+                    Location: `https://testious-app.netlify.app/dashboard?shop=${shop}`,
+                },
             };
         } else {
             console.error('Failed to exchange access token:', data);
