@@ -1,5 +1,5 @@
 import { Handler } from '@netlify/functions';
-import fetch from 'node-fetch';
+import { shopifyApi } from '@shopify/shopify-api';
 import { createClient } from '@supabase/supabase-js';
 import { getTrillionTryonContent } from './templates/trillion-tryon';
 
@@ -7,9 +7,10 @@ const SUPABASE_URL = process.env.SUPABASE_URL || '';
 const SUPABASE_KEY = process.env.SUPABASE_KEY || '';
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+const SHOPIFY_API_VERSION = '2024-10'; // Update based on your app's versioning
+
 export const handler: Handler = async (event) => {
     try {
-        // Parse incoming request
         const { shop, apiKey } = JSON.parse(event.body || '{}');
         console.log('Request received:', { shop, apiKey });
 
@@ -37,16 +38,14 @@ export const handler: Handler = async (event) => {
         }
 
         const SHOPIFY_ACCESS_TOKEN = data.access_token;
-        console.log('Access token retrieved for shop:', shop);
-        console.log('Access token:', SHOPIFY_ACCESS_TOKEN);
 
-        // Fetch themes from Shopify
-        const API_BASE = `https://${shop}/admin/api/2024-10`;
-        const themesResponse = await fetch(`${API_BASE}/themes.json`, {
+        // Fetch the active theme ID dynamically
+        console.log('Fetching themes for shop:', shop);
+        const themesResponse = await fetch(`https://${shop}/admin/api/${SHOPIFY_API_VERSION}/themes.json`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
                 'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN,
+                'Content-Type': 'application/json',
             },
         });
 
@@ -60,66 +59,44 @@ export const handler: Handler = async (event) => {
         }
 
         const themesData = await themesResponse.json();
-        console.log('Themes data received:', themesData);
-
-        if (!themesData || !Array.isArray(themesData.themes)) {
-            console.error('Invalid themes data:', themesData);
-            throw new Error('Invalid themes data: themes array is missing.');
-        }
-
         const activeTheme = themesData.themes.find((theme: any) => theme.role === 'main');
+
         if (!activeTheme) {
-            console.error('Active theme not found in themes data');
-            throw new Error('Active theme not found.');
+            console.error('Active theme not found');
+            return {
+                statusCode: 404,
+                body: JSON.stringify({ error: 'Active theme not found' }),
+            };
         }
 
         const themeId = activeTheme.id;
         console.log('Active theme ID:', themeId);
 
-        // Generate the template content
-        const templateContent = getTrillionTryonContent(apiKey);
-        console.log('Generated template content for API key.');
-
-        // Upload the template to Shopify
-        console.log('Upload URL:', `${API_BASE}/themes/${themeId}/assets.json`);
-        console.log('Template payload:', {
-            asset: {
-                key: 'templates/page.trillion-tryon.liquid',
-                value: templateContent,
-            },
+        // Initialize the Shopify REST API client
+        const shopify = shopifyApi({
+            apiKey: process.env.SHOPIFY_API_KEY || '',
+            apiSecretKey: process.env.SHOPIFY_API_SECRET || '',
+            apiVersion: SHOPIFY_API_VERSION,
         });
-        const uploadTemplateResponse = await fetch(
-            `${API_BASE}/themes/${themeId}/assets.json`,
-            {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN,
-                },
-                body: JSON.stringify({
-                    asset: {
-                        key: 'templates/page.trillion-tryon.liquid',
-                        value: templateContent,
-                    },
-                }),
-            }
-        );
 
-        if (!uploadTemplateResponse.ok) {
-            const error = await uploadTemplateResponse.json();
-            console.error('Error uploading template:', error);
-            console.error('Upload URL:', `${API_BASE}/themes/${themeId}/assets.json`);
-            console.error('Template payload:', {
-                asset: {
-                    key: 'templates/page.trillion-tryon.liquid',
-                    value: templateContent,
-                },
-            });
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: error.errors || 'Failed to upload template' }),
-            };
-        }
+        const session = {
+            shop,
+            accessToken: SHOPIFY_ACCESS_TOKEN,
+        };
+
+        // Generate template content
+        const templateContent = getTrillionTryonContent(apiKey);
+
+        // Upload the template
+        const asset = new shopify.rest.Asset({session: session});
+        asset.theme_id = themeId; // Use the dynamically fetched theme ID
+        asset.key = 'templates/page.trillion-tryon.liquid';
+        asset.value = templateContent;
+
+        console.log('Uploading template to Shopify...');
+        await asset.save({
+            update: true, // Ensures the asset is created or updated
+        });
 
         console.log('Template uploaded successfully.');
 
@@ -136,8 +113,6 @@ export const handler: Handler = async (event) => {
                 body: JSON.stringify({ error: 'Failed to save API key to database' }),
             };
         }
-
-        console.log('API key saved to database for shop:', shop);
 
         return {
             statusCode: 200,
