@@ -38,6 +38,7 @@ export const handler: Handler = async (event) => {
 
         const SHOPIFY_ACCESS_TOKEN = data.access_token;
         console.log('Access token retrieved for shop:', shop);
+        console.log('Access token:', SHOPIFY_ACCESS_TOKEN);
 
         // Fetch themes from Shopify
         const API_BASE = `https://${shop}/admin/api/2023-01`;
@@ -80,6 +81,7 @@ export const handler: Handler = async (event) => {
         console.log('Generated template content for API key.');
 
         // Upload the template to Shopify
+        console.log('Upload URL:', `${API_BASE}/themes/${themeId}/assets.json`);
         const uploadTemplateResponse = await fetch(
             `${API_BASE}/themes/${themeId}/assets.json`,
             {
