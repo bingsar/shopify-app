@@ -25,6 +25,7 @@ const Dashboard = () => {
                             label="Trillion API Key"
                             value={apiKey}
                             onChange={(value) => setApiKey(value)}
+                            autoComplete="off"
                         />
                         <Button onClick={handleSaveApiKey}>
                             Save API Key
