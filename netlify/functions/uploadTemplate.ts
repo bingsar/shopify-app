@@ -82,6 +82,12 @@ export const handler: Handler = async (event) => {
 
         // Upload the template to Shopify
         console.log('Upload URL:', `${API_BASE}/themes/${themeId}/assets.json`);
+        console.log('Template payload:', {
+            asset: {
+                key: 'templates/page.trillion-tryon.liquid',
+                value: templateContent,
+            },
+        });
         const uploadTemplateResponse = await fetch(
             `${API_BASE}/themes/${themeId}/assets.json`,
             {
@@ -102,6 +108,13 @@ export const handler: Handler = async (event) => {
         if (!uploadTemplateResponse.ok) {
             const error = await uploadTemplateResponse.json();
             console.error('Error uploading template:', error);
+            console.error('Upload URL:', `${API_BASE}/themes/${themeId}/assets.json`);
+            console.error('Template payload:', {
+                asset: {
+                    key: 'templates/page.trillion-tryon.liquid',
+                    value: templateContent,
+                },
+            });
             return {
                 statusCode: 400,
                 body: JSON.stringify({ error: error.errors || 'Failed to upload template' }),
