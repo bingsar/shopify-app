@@ -1,0 +1,17 @@
+client_id = "532eedada768db9254ed4ee8d94b35fc"
+application_url = "https://testious-app.netlify.app/dashboard"
+embedded = true
+name = "trillion-custom-app"
+handle = "trillion-custom-app"
+
+[build]
+include_config_on_deploy = true
+
+[webhooks]
+api_version = "2024-10"
+
+[auth]
+redirect_urls = [ "https://testious-app.netlify.app/.netlify/functions/auth" ]
+
+[pos]
+embedded = false
