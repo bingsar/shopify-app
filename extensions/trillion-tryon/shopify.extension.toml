@@ -1,0 +1,10 @@
+# extensions/trillion-tryon/shopify.extension.toml
+name = "Trillion Try-On Template"
+type = "theme"
+version = "1.0"
+
+[capabilities]
+template = true
+
+[template]
+key = "templates/page.trillion-tryon.liquid"
