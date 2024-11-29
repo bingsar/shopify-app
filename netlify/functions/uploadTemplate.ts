@@ -35,7 +35,6 @@ export const handler: Handler = async (event) => {
 
         const SHOPIFY_ACCESS_TOKEN = data.access_token;
 
-        // Fetch themes using GraphQL
         const graphqlQuery = `
             query {
               themes(first: 10) {
@@ -50,7 +49,7 @@ export const handler: Handler = async (event) => {
             }
         `;
 
-        const themesResponse = await fetch(`https://${shop}/admin/api/2024-01/graphql.json`, {
+        const themesResponse = await fetch(`https://${shop}/admin/api/2024-10/graphql.json`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -76,6 +75,7 @@ export const handler: Handler = async (event) => {
         }
 
         const themeId = activeTheme.node.id;
+
         console.log('Active theme ID:', themeId);
 
         // Generate the template content
@@ -109,7 +109,7 @@ export const handler: Handler = async (event) => {
             themeId: themeId,
         };
 
-        const uploadResponse = await fetch(`https://${shop}/admin/api/2024-01/graphql.json`, {
+        const uploadResponse = await fetch(`https://${shop}/admin/api/2024-10/graphql.json`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
