@@ -31,7 +31,6 @@ const Dashboard = () => {
     }, []);
 
     useEffect(() => {
-        setTrillionApiKey('akjdowad-oawjdjawodj-ahudh829jdk2')
         fetch('/.netlify/functions/getApiKey')
             .then((response) => {
                 if (!response.ok) {
@@ -40,6 +39,7 @@ const Dashboard = () => {
                 return response.json();
             })
             .then((data) => {
+                console.log(data)
                 if (data.trillion_api_key) {
                     setTrillionApiKey(data.trillion_api_key);
                 }
