@@ -95,8 +95,8 @@ const Dashboard = () => {
     };
 
     const handleDeleteApiKey = async () => {
-        const response = await fetch(`/api/deleteApiKey`, {
-            method: 'DELETE',
+        const response = await fetch(`/.netlify/functions/deleteApiKey`, {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
