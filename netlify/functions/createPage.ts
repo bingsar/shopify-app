@@ -31,8 +31,8 @@ export const handler: Handler = async (event) => {
         const SHOPIFY_ACCESS_TOKEN = data.access_token;
 
         const query = `
-            mutation createPage($input: PageInput!) {
-              pageCreate(input: $input) {
+            mutation createPage($page: PageCreateInput!) {
+              pageCreate(page: $page) {
                 page {
                   id
                   title
@@ -48,7 +48,7 @@ export const handler: Handler = async (event) => {
         `
 
         const variables = {
-            input: {
+            page: {
                 title: 'Trillion Try-on',
                 handle: 'trillion-tryon',
                 templateSuffix: 'trillion-tryon',
