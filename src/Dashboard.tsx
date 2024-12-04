@@ -13,7 +13,6 @@ const Dashboard = () => {
             const data = await response.json();
             if (data.trillion_api_key) {
                 setTrillionApiKey(data.trillion_api_key);
-                setLoading(false)
             } else {
                 console.error('No API key found');
             }
@@ -27,7 +26,7 @@ const Dashboard = () => {
         const shopFromUrl = urlParams.get('shop');
         if (shopFromUrl) {
             setShop(shopFromUrl);
-            fetchApiKey(shopFromUrl).then()
+            fetchApiKey(shopFromUrl).then(() => {setLoading(false)})
         } else {
             fetch('/.netlify/functions/getShop')
                 .then((response) => {
@@ -39,7 +38,7 @@ const Dashboard = () => {
                 .then((data) => {
                     if (data.shop) {
                         setShop(data.shop);
-                        fetchApiKey(data.shop).then()
+                        fetchApiKey(data.shop).then(() => {setLoading(false)})
                     }
                 })
                 .catch((err) => {
