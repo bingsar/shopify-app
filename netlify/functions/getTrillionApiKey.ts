@@ -15,10 +15,8 @@ const handler: Handler = async (event, context) => {
         .single();
 
     if (error) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: error.message }),
-        };
+        console.error('Error fetching Trillion API Key:', error);
+        return null;
     }
 
     return {
