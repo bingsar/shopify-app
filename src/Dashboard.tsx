@@ -31,23 +31,22 @@ const Dashboard = () => {
     }, []);
 
     useEffect(() => {
-        fetch('/.netlify/functions/getApiKey')
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch shop');
-                }
-                return response.json();
-            })
-            .then((data) => {
-                console.log(data)
+        const fetchApiKey = async () => {
+            try {
+                const response = await fetch(`/.netlify/functions/getTrillionApiKey?shop=${shop}`);
+                const data = await response.json();
                 if (data.trillion_api_key) {
                     setTrillionApiKey(data.trillion_api_key);
+                } else {
+                    console.error('No API key found');
                 }
-            })
-            .catch((err) => {
-                console.error('Error fetching trillion api key:', err);
-            });
-    }, [])
+            } catch (err) {
+                console.error('Failed to fetch the API key');
+            }
+        };
+
+        fetchApiKey();
+    }, []);
 
     const handleSaveApiKey = () => {
         fetch('/.netlify/functions/uploadTemplate', {
