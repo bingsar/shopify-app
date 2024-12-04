@@ -4,7 +4,7 @@ import {Page, TextField, Button, Card, Layout, Text, Tag, SkeletonBodyText} from
 const Dashboard = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [apiKey, setApiKey] = useState('');
-    const [shop, setShop] = useState<string | null>(null);
+    const [shop, setShop] = useState<string>('');
     const [trillionApiKey, setTrillionApiKey] = useState<string | null>(null)
 
     const fetchApiKey = async (shop: string) => {
@@ -62,7 +62,7 @@ const Dashboard = () => {
             .then((response) => response.json())
             .then((data) => {
                 if (data.success) {
-                    fetchApiKey(data.shop).then(() => {setLoading(false)})
+                    fetchApiKey(shop).then(() => {setLoading(false)})
                 } else {
                     console.error(data.error);
                 }
