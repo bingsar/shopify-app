@@ -2,8 +2,3 @@ name = "trillion-try-on-template"
 type = "theme"
 version = "1.0"
 scopes = "write_themes,read_themes"
-
-[assets]
-files = [
-    "assets/trillion-tryon.js"
-]

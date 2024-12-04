@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Page, TextField, Button, Card, Layout } from '@shopify/polaris';
+import {Page, TextField, Button, Card, Layout, Text, Tag} from '@shopify/polaris';
 
 const Dashboard = () => {
     const [apiKey, setApiKey] = useState('');
     const [shop, setShop] = useState<string | null>(null);
+    const [trillionApiKey, setTrillionApiKey] = useState<string | null>(null)
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -28,6 +29,25 @@ const Dashboard = () => {
                 });
         }
     }, []);
+
+    useEffect(() => {
+        setTrillionApiKey('akjdowad-oawjdjawodj-ahudh829jdk2')
+        fetch('/.netlify/functions/getApiKey')
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch shop');
+                }
+                return response.json();
+            })
+            .then((data) => {
+                if (data.trillion_api_key) {
+                    setTrillionApiKey(data.trillion_api_key);
+                }
+            })
+            .catch((err) => {
+                console.error('Error fetching trillion api key:', err);
+            });
+    }, [])
 
     const handleSaveApiKey = () => {
         fetch('/.netlify/functions/uploadTemplate', {
@@ -58,17 +78,40 @@ const Dashboard = () => {
                     <div style={{display: 'grid', gap: '20px'}}>
                     <Card>
                         <div>
-                            <TextField
-                                label="Trillion API Key"
-                                value={apiKey}
-                                onChange={(value) => setApiKey(value)}
-                                autoComplete="off"
+                            {!trillionApiKey ? (
+                                <>
+                                    <TextField
+                                        label="Trillion API Key"
+                                        value={apiKey}
+                                        onChange={(value) => setApiKey(value)}
+                                        autoComplete="off"
 
-                            />
-                            <br/>
-                            <Button variant={'primary'} fullWidth={false} onClick={handleSaveApiKey}>
-                                Save API Key
-                            </Button>
+                                    />
+                                    <br/>
+                                    <Button variant={'primary'} fullWidth={false} onClick={handleSaveApiKey}>
+                                        Save API Key
+                                    </Button>
+                                </>
+                                ) : (
+                                    <div style={{ display: "inline-grid", gap: "10px" }}>
+                                        <Text variant="headingLg" as="h5">
+                                            Trillion Api Key
+                                        </Text>
+                                        <Tag>
+                                            {trillionApiKey}
+                                        </Tag>
+                                        <div style={{ display: "flex", gap: "20px" }}>
+                                            <Button fullWidth={false} onClick={handleSaveApiKey}>
+                                                Edit
+                                            </Button>
+                                            <Button variant="primary" tone="critical" fullWidth={false} onClick={handleSaveApiKey}>
+                                                Delete
+                                            </Button>
+                                        </div>
+                                    </div>
+                                )
+                            }
+
                         </div>
                     </Card>
                     {shop &&
