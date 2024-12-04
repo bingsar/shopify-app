@@ -70,6 +70,22 @@ const Dashboard = () => {
             .catch((err) => console.error('Error:', err));
     };
 
+    const handleDeleteApiKey = async () => {
+        const response = await fetch(`/api/deleteApiKey`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ shop_domain: shop }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete API key');
+        }
+
+        return response.json();
+    };
+
     return (
         <Page title="Dashboard">
                 <Layout.Section>
@@ -96,17 +112,14 @@ const Dashboard = () => {
                             )}
                             {(trillionApiKey && !loading) && (
                                 <div style={{ display: "inline-grid", gap: "10px" }}>
-                                    <Text variant="headingLg" as="h5">
+                                    <Text variant="headingLg" as="h6">
                                         Trillion Api Key
                                     </Text>
                                     <Tag>
                                         {trillionApiKey}
                                     </Tag>
                                     <div style={{ display: "flex", gap: "20px" }}>
-                                        <Button fullWidth={false} onClick={handleSaveApiKey}>
-                                            Edit
-                                        </Button>
-                                        <Button variant="primary" tone="critical" fullWidth={false} onClick={handleSaveApiKey}>
+                                        <Button variant="primary" tone="critical" fullWidth={false} onClick={handleDeleteApiKey}>
                                             Delete
                                         </Button>
                                     </div>

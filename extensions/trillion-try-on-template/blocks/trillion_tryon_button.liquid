@@ -39,12 +39,8 @@
 
   const url = document.location.pathname;
 
-  // Choose how to get the SKU
-  // Method 1. use sku field in the shopify product
   const jewelryId = "{{ product.selected_or_first_available_variant.sku }}";
-
-  // Method 2. get the sku from the url
-  // const jewelryId = url.slice(url.lastIndexOf('/') + 1);
+  console.log('jewelryId', jewelryId)
 
   const arButton = document.querySelector(".trillion-ar-button");
 
@@ -64,7 +60,7 @@
 
   async function checkJewelryExists() {
     const response = await fetch(
-            `https://dashboard.trillion.jewelry/api/trillionwebapp/publication-status/${jewelryId}`,
+            `https://dev.dashboard.trillion.jewelry/api/trillionwebapp/publication-status/${jewelryId}`,
             {
               method: "GET",
             }
