@@ -48,6 +48,7 @@ const Dashboard = () => {
     }, []);
 
     const handleSaveApiKey = () => {
+        setLoading(true)
         fetch('/.netlify/functions/uploadTemplate', {
             method: 'POST',
             headers: {
@@ -61,10 +62,9 @@ const Dashboard = () => {
             .then((response) => response.json())
             .then((data) => {
                 if (data.success) {
-                    alert('Page and API Key saved successfully!');
+                    fetchApiKey(data.shop).then(() => {setLoading(false)})
                 } else {
                     console.error(data.error);
-                    alert('Error saving API Key or creating page.');
                 }
             })
             .catch((err) => console.error('Error:', err));
