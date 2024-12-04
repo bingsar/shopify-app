@@ -1,4 +1,4 @@
-name = "trillion-try-on-template"
+name = "ar-button"
 type = "theme"
 version = "1.0"
 scopes = "write_themes,read_themes"
