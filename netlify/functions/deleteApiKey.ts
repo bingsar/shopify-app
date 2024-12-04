@@ -25,5 +25,3 @@ export const handler: Handler = async (event) => {
         body: JSON.stringify({ message: 'API key deleted successfully' }),
     };
 }
-
-export { handler };
