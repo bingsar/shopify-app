@@ -21,6 +21,29 @@ const Dashboard = () => {
         }
     };
 
+    const createPageRequest = async () => {
+        try {
+            const response = await fetch('/.netlify/functions/createPage', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    shop,
+                    apiKey,
+                }),
+            })
+            const data = await response.json();
+            if (data.success) {
+                console.log('Page for Trillion Try-on was created')
+            } else {
+                console.error('Error with create page request');
+            }
+        } catch (err) {
+            console.error('Failed to create a page:', err);
+        }
+    };
+
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const shopFromUrl = urlParams.get('shop');
@@ -60,9 +83,10 @@ const Dashboard = () => {
             }),
         })
             .then((response) => response.json())
-            .then((data) => {
+            .then(async (data) => {
                 if (data.success) {
-                    fetchApiKey(shop).then(() => {setLoading(false)})
+                    await fetchApiKey(shop).then(() => {setLoading(false)})
+                    await createPageRequest()
                 } else {
                     console.error(data.error);
                 }
