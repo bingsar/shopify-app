@@ -46,7 +46,7 @@ const Dashboard = () => {
         };
 
         fetchApiKey();
-    }, []);
+    }, [shop, setShop]);
 
     const handleSaveApiKey = () => {
         fetch('/.netlify/functions/uploadTemplate', {
