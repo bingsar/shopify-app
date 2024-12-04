@@ -7,7 +7,7 @@ const Dashboard = () => {
     const [shop, setShop] = useState<string | null>(null);
     const [trillionApiKey, setTrillionApiKey] = useState<string | null>(null)
 
-    const fetchApiKey = async () => {
+    const fetchApiKey = async (shop: string) => {
         try {
             const response = await fetch(`/.netlify/functions/getTrillionApiKey?shop=${shop}`);
             const data = await response.json();
@@ -27,7 +27,7 @@ const Dashboard = () => {
         const shopFromUrl = urlParams.get('shop');
         if (shopFromUrl) {
             setShop(shopFromUrl);
-            fetchApiKey()
+            fetchApiKey(shopFromUrl).then()
         } else {
             fetch('/.netlify/functions/getShop')
                 .then((response) => {
@@ -39,7 +39,7 @@ const Dashboard = () => {
                 .then((data) => {
                     if (data.shop) {
                         setShop(data.shop);
-                        fetchApiKey()
+                        fetchApiKey(data.shop).then()
                     }
                 })
                 .catch((err) => {
