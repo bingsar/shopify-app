@@ -48,6 +48,7 @@ const Dashboard = () => {
     const uploadViewerElementFile = async (shop: string) => {
         try {
             const response = await fetch(`/.netlify/functions/uploadViewerElement`, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
