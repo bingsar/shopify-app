@@ -111,7 +111,7 @@ const Dashboard = () => {
                 if (data.success) {
                     await fetchApiKey(shop).then(() => {setLoading(false)})
                     await createPageRequest()
-                    await uploadViewerElementFile(shop, apiKey)
+                    await uploadViewerElementFile(shop)
                 } else {
                     console.error(data.error);
                 }
