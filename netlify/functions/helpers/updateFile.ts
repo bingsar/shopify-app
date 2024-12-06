@@ -5,7 +5,6 @@ export const getFileId = async (shop: string, accessToken: string): Promise<stri
             edges {
               node {
                 id
-                originalSource
               }
             }
           }
@@ -34,13 +33,11 @@ export const getFileId = async (shop: string, accessToken: string): Promise<stri
         throw new Error('Failed to fetch files');
     }
 
-    const file = data.data.files.edges.find((file: any) =>
-        file.node.originalSource.includes('product-model.js')
-    );
+    const file = data.data.files.edges[0]?.node;
 
     console.log('file again',file)
 
-    return file?.node?.id || null;
+    return file?.id || null;
 };
 
 export const updateFile = async (shop: string, accessToken: string, fileId: string, newContent: string): Promise<boolean> => {
