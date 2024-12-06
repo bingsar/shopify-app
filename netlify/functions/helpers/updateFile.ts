@@ -1,7 +1,7 @@
 export const getFileId = async (shop: string, accessToken: string): Promise<string | null> => {
     const query = `
-        query GetFiles($query: String) {
-          files(first: 10, query: $query) {
+        query GetFileByFilename($query: String!) {
+          files(first: 1, query: $query) {
             edges {
               node {
                 id
@@ -12,7 +12,7 @@ export const getFileId = async (shop: string, accessToken: string): Promise<stri
     `;
 
     const variables = {
-        query: "product-model.js",
+        query: 'filename:product-model.js',
     };
 
     const response = await fetch(`https://${shop}/admin/api/2024-10/graphql.json`, {
