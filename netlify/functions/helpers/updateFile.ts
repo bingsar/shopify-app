@@ -23,6 +23,8 @@ export const getFileId = async (shop: string, accessToken: string): Promise<stri
 
     const data = await response.json();
 
+    console.log('file ', data)
+
     if (!response.ok || data.errors) {
         console.error('Error fetching files:', data.errors || data);
         throw new Error('Failed to fetch files');

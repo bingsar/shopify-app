@@ -10,6 +10,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 export const handler: Handler = async (event) => {
     try {
         const { shop } = JSON.parse(event.body || '{}');
+        console.log('Request received:', { shop });
         if (!shop) {
             return {
                 statusCode: 400,
@@ -31,7 +32,7 @@ export const handler: Handler = async (event) => {
         }
 
         const SHOPIFY_ACCESS_TOKEN = data.access_token;
-
+        console.log('got access token', SHOPIFY_ACCESS_TOKEN)
         const fileId = await getFileId(shop, SHOPIFY_ACCESS_TOKEN);
         if (!fileId) {
             return {
