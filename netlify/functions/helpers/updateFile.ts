@@ -1,16 +1,20 @@
 export const getFileId = async (shop: string, accessToken: string): Promise<string | null> => {
     const query = `
-        query {
-            files(first: 10) {
-                edges {
-                    node {
-                        id
-                        filename
-                    }
-                }
+        query GetFiles($query: String) {
+          files(first: 10, query: $query) {
+            edges {
+              node {
+                id
+                originalSource
+              }
             }
+          }
         }
     `;
+
+    const variables = {
+        query: "product-model.js",
+    };
 
     const response = await fetch(`https://${shop}/admin/api/2024-10/graphql.json`, {
         method: 'POST',
@@ -18,7 +22,7 @@ export const getFileId = async (shop: string, accessToken: string): Promise<stri
             'Content-Type': 'application/json',
             'X-Shopify-Access-Token': accessToken,
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query, variables }),
     });
 
     const data = await response.json();
@@ -30,7 +34,12 @@ export const getFileId = async (shop: string, accessToken: string): Promise<stri
         throw new Error('Failed to fetch files');
     }
 
-    const file = data.data.files.edges.find((file: any) => file.node.filename === 'product-model.js');
+    const file = data.data.files.edges.find((file: any) =>
+        file.node.originalSource.includes('product-model.js')
+    );
+
+    console.log('file again',file)
+
     return file?.node?.id || null;
 };
 
