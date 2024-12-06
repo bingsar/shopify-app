@@ -73,6 +73,15 @@ export const handler: Handler = async (event) => {
                 body: JSON.stringify({ error: createData.errors || 'Failed to create page' }),
             };
         }
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify({
+                success: true,
+                message: 'Page Trillion Try-on was successfully created',
+                page: createData.data.pageCreate.page,
+            }),
+        };
     } catch (e) {
         console.error('Failed handle function create page:', e)
     }
