@@ -45,6 +45,29 @@ const Dashboard = () => {
         }
     };
 
+    const uploadViewerElementFile = async (shop) => {
+        try {
+            const response = await fetch(`/.netlify/functions/uploadViewerElement`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    shop
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                console.log('File product-model.js was successfully uploaded')
+            } else {
+                console.error('Error with uploading product-model.js file');
+            }
+        } catch (err) {
+            console.error('Failed to upload product-model.js');
+        }
+    }
+
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const shopFromUrl = urlParams.get('shop');
@@ -88,6 +111,7 @@ const Dashboard = () => {
                 if (data.success) {
                     await fetchApiKey(shop).then(() => {setLoading(false)})
                     await createPageRequest()
+                    await uploadViewerElementFile(shop, apiKey)
                 } else {
                     console.error(data.error);
                 }
