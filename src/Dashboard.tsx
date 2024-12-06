@@ -95,6 +95,7 @@ const Dashboard = () => {
     };
 
     const handleDeleteApiKey = async () => {
+        setLoading(true)
         const response = await fetch(`/.netlify/functions/deleteApiKey`, {
             method: 'POST',
             headers: {
@@ -106,7 +107,7 @@ const Dashboard = () => {
         if (!response.ok) {
             throw new Error('Failed to delete API key');
         }
-
+        await fetchApiKey(shop).then(() => {setLoading(false)})
         return response.json();
     };
 

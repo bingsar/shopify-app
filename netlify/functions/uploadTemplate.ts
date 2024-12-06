@@ -130,7 +130,6 @@ export const handler: Handler = async (event) => {
 
         console.log('Template uploaded successfully:', uploadData);
 
-        // Save the API key to Supabase
         const { error: saveError } = await supabase
             .from('stores')
             .update({ trillion_api_key: apiKey })

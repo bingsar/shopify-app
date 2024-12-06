@@ -5,9 +5,11 @@
     display: none;
     padding: 0;
     border-radius: {{ block.settings.border_radius }};
+    border-width: {{ block.settings.border_width }};
     outline: none;
     cursor: pointer;
     width: 100%;
+    overflow: hidden;
   }
 
   .trillion-ar-button__inner-layout {
@@ -158,6 +160,12 @@
     {
       "label": "Border radius",
       "id": "border_radius",
+      "type": "text",
+      "default": "0px"
+    },
+    {
+      "label": "Border width",
+      "id": "border_width",
       "type": "text",
       "default": "0px"
     },
