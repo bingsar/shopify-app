@@ -14,6 +14,7 @@ const Dashboard = () => {
             if (data.trillion_api_key) {
                 setTrillionApiKey(data.trillion_api_key);
             } else {
+                setTrillionApiKey(null)
                 console.error('No API key found');
             }
         } catch (err) {
