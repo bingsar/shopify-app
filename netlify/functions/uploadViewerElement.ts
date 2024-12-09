@@ -1,13 +1,7 @@
 import {Handler} from "@netlify/functions/dist/main";
-import {createClient} from "@supabase/supabase-js";
-import {getFileId, updateFile} from "./helpers/updateFile";
 import {productModel} from "./templates/product-model";
 import {getShopAuthToken} from "./helpers/getShopAuthToken";
 import {getActiveThemeId} from "./helpers/getActiveThemeId";
-
-const SUPABASE_URL = process.env.SUPABASE_URL || '';
-const SUPABASE_KEY = process.env.SUPABASE_KEY || '';
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 export const handler: Handler = async (event) => {
     try {

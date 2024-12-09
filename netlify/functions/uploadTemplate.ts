@@ -5,6 +5,9 @@ import { getTrillionTryonContent } from './templates/trillion-tryon';
 import {getShopAuthToken} from "./helpers/getShopAuthToken";
 import {getActiveThemeId} from "./helpers/getActiveThemeId";
 
+const SUPABASE_URL = process.env.SUPABASE_URL || '';
+const SUPABASE_KEY = process.env.SUPABASE_KEY || '';
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 export const handler: Handler = async (event) => {
     try {
@@ -21,12 +24,8 @@ export const handler: Handler = async (event) => {
 
         const themeId = getActiveThemeId(SHOPIFY_ACCESS_TOKEN, shop)
 
-        console.log('Active theme ID:', themeId);
-
-        // Generate the template content
         const templateContent = getTrillionTryonContent(apiKey);
 
-        // Upload the template using GraphQL mutation
         const mutation = `
             mutation themeFilesUpsert($files: [OnlineStoreThemeFilesUpsertFileInput!]!, $themeId: ID!) {
               themeFilesUpsert(files: $files, themeId: $themeId) {
