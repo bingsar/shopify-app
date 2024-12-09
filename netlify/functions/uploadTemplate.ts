@@ -21,8 +21,10 @@ export const handler: Handler = async (event) => {
         }
 
         const SHOPIFY_ACCESS_TOKEN = await getShopAuthToken(shop)
+        console.log('SHOPIFY_ACCESS_TOKEN', SHOPIFY_ACCESS_TOKEN)
 
         const themeId = getActiveThemeId(SHOPIFY_ACCESS_TOKEN, shop)
+        console.log('themeId', themeId)
 
         const templateContent = getTrillionTryonContent(apiKey);
 
