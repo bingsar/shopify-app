@@ -2,15 +2,13 @@ import { Handler } from '@netlify/functions';
 import fetch from 'node-fetch';
 import { createClient } from '@supabase/supabase-js';
 import { getTrillionTryonContent } from './templates/trillion-tryon';
+import {getShopAuthToken} from "./helpers/getShopAuthToken";
+import {getActiveThemeId} from "./helpers/getActiveThemeId";
 
-const SUPABASE_URL = process.env.SUPABASE_URL || '';
-const SUPABASE_KEY = process.env.SUPABASE_KEY || '';
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 export const handler: Handler = async (event) => {
     try {
         const { shop, apiKey } = JSON.parse(event.body || '{}');
-        console.log('Request received:', { shop, apiKey });
 
         if (!shop || !apiKey) {
             return {
@@ -19,62 +17,9 @@ export const handler: Handler = async (event) => {
             };
         }
 
-        // Fetch the access token from Supabase
-        const { data, error } = await supabase
-            .from('stores')
-            .select('access_token')
-            .eq('shop_domain', shop)
-            .single();
+        const SHOPIFY_ACCESS_TOKEN = await getShopAuthToken(shop)
 
-        if (error || !data?.access_token) {
-            return {
-                statusCode: 404,
-                body: JSON.stringify({ error: 'Access token not found for shop' }),
-            };
-        }
-
-        const SHOPIFY_ACCESS_TOKEN = data.access_token;
-
-        const graphqlQuery = `
-            query {
-              themes(first: 10) {
-                edges {
-                  node {
-                    id
-                    name
-                    role
-                  }
-                }
-              }
-            }
-        `;
-
-        const themesResponse = await fetch(`https://${shop}/admin/api/2024-10/graphql.json`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN,
-            },
-            body: JSON.stringify({ query: graphqlQuery }),
-        });
-
-        const themesData = await themesResponse.json();
-
-        if (!themesResponse.ok || themesData.errors) {
-            console.error('Error fetching themes:', themesData.errors || themesData);
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: themesData.errors || 'Failed to fetch themes' }),
-            };
-        }
-
-        const themes = themesData.data.themes.edges;
-        const activeTheme = themes.find((theme: any) => theme.node.role === 'MAIN');
-        if (!activeTheme) {
-            throw new Error('Active theme not found.');
-        }
-
-        const themeId = activeTheme.node.id;
+        const themeId = getActiveThemeId(SHOPIFY_ACCESS_TOKEN, shop)
 
         console.log('Active theme ID:', themeId);
 
