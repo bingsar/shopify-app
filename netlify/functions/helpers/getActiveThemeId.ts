@@ -37,6 +37,6 @@ export const getActiveThemeId = async (SHOPIFY_ACCESS_TOKEN: string, shop: strin
     if (!activeTheme) {
         throw new Error('Active theme not found.');
     }
-
+    console.log('THEME ID', activeTheme.node.id)
     return activeTheme.node.id
 }
