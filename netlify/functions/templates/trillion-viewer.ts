@@ -5,7 +5,7 @@ export const getTrillionViewerScriptContent = async (apiKey: string) => `
       const activationKey = "${apiKey}"
       
       const url = document.location.pathname;
-      const jewelryId = "{{ product.selected_or_first_available_variant.sku }}";
+      const jewelryId = "{{ product.selected_or_first_available_variant.sku }}"
     
       const slideSelector = '#trillion-viewer'
       
@@ -24,7 +24,7 @@ export const getTrillionViewerScriptContent = async (apiKey: string) => `
       }
     
       async function checkJewelryExists() {
-        const response = await fetch(\`https://dashboard.trillion.jewelry/api/trillionwebapp/publication-status/${jewelryId}\`, {
+        const response = await fetch("https://dashboard.trillion.jewelry/api/trillionwebapp/publication-status/` + ${jewelryId} + `", {
           method: "GET",
           headers: {
             "Accept": "application/json",
