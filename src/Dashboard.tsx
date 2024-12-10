@@ -45,6 +45,28 @@ const Dashboard = () => {
         }
     };
 
+    const updateThemeFile = async (shop: string) => {
+        try {
+            const response = await fetch('/.netlify/functions/updateThemeFile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    shop,
+                }),
+            })
+            const data = await response.json();
+            if (data.success) {
+                console.log('Theme.liquid was updated')
+            } else {
+                console.error('Error with updating theme.liquid request');
+            }
+        } catch (err) {
+            console.error('Failed to update theme.liquid:', err);
+        }
+    };
+
     const uploadViewerElementFile = async (shop: string) => {
         try {
             const response = await fetch(`/.netlify/functions/uploadViewerElement`, {
@@ -139,6 +161,7 @@ const Dashboard = () => {
                     await createPageRequest(shop, apiKey)
                     await uploadViewerElementFile(shop)
                     await uploadViewerScript(shop, apiKey)
+                    await updateThemeFile(shop)
                     setLoading(false)
                 } else {
                     console.error(data.error);
