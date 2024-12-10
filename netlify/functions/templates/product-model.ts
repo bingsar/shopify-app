@@ -1,4 +1,5 @@
 export const productModel = `
+  
   if (!customElements.get('product-model')) {
     customElements.define('product-model', class ProductModel extends DeferredMedia {
       constructor() {
@@ -22,13 +23,13 @@ export const productModel = `
   
         const modelViewer = this.querySelector('model-viewer');
         if (modelViewer) {
-          const trillionWidget = document.createElement('div');
-          trillionWidget.id = 'trillion-widget';
+          const trillionViewer = document.createElement('div');
+          trillionViewer.id = 'trillion-viewer';
   
-          trillionWidget.dataset.src = modelViewer.getAttribute('src');
-          trillionWidget.dataset.alt = modelViewer.getAttribute('alt');
+          trillionViewer.dataset.src = modelViewer.getAttribute('src');
+          trillionViewer.dataset.alt = modelViewer.getAttribute('alt');
   
-          modelViewer.replaceWith(trillionWidget);
+          modelViewer.replaceWith(trillionViewer);
         }
       }
     });

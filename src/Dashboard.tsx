@@ -22,7 +22,7 @@ const Dashboard = () => {
         }
     };
 
-    const createPageRequest = async () => {
+    const createPageRequest = async (shop: string, apiKey: string) => {
         try {
             const response = await fetch('/.netlify/functions/createPage', {
                 method: 'POST',
@@ -69,6 +69,31 @@ const Dashboard = () => {
         }
     }
 
+    const uploadViewerScript = async (shop: string, apiKey:string) => {
+        try {
+            const response = await fetch(`/.netlify/functions/uploadTrillionViewerScript`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    shop,
+                    apiKey
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                console.log('File trillion-viewer.liquid was successfully uploaded')
+            } else {
+                console.error('Error with uploading trillion-viewer.liquid  file');
+            }
+        } catch (err) {
+            console.error('Failed to upload trillion-viewer.liquid ');
+        }
+    }
+
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const shopFromUrl = urlParams.get('shop');
@@ -110,9 +135,11 @@ const Dashboard = () => {
             .then((response) => response.json())
             .then(async (data) => {
                 if (data.success) {
-                    await fetchApiKey(shop).then(() => {setLoading(false)})
-                    await createPageRequest()
+                    await fetchApiKey(shop)
+                    await createPageRequest(shop, apiKey)
                     await uploadViewerElementFile(shop)
+                    await uploadViewerScript(shop, apiKey)
+                    setLoading(false)
                 } else {
                     console.error(data.error);
                 }
