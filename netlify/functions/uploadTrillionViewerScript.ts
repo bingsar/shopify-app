@@ -18,6 +18,7 @@ export const handler: Handler = async (event) => {
         const SHOPIFY_ACCESS_TOKEN = await getShopAuthToken(shop)
         const themeId = await getActiveThemeId(SHOPIFY_ACCESS_TOKEN, shop)
         const templateContent = await getTrillionViewerScriptContent(apiKey);
+        console.log('templateContent viewer script', templateContent)
 
         const mutation = `
             mutation themeFilesUpsert($files: [OnlineStoreThemeFilesUpsertFileInput!]!, $themeId: ID!) {
