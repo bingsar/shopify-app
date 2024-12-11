@@ -46,6 +46,7 @@ export const handler: Handler = async (event) => {
         });
 
         const fetchData = await fetchResponse.json();
+        console.log('fetchData', fetchData)
 
         if (!fetchResponse.ok || fetchData.errors) {
             console.error('Error fetching theme.liquid:', fetchData.errors || fetchData);
@@ -55,7 +56,9 @@ export const handler: Handler = async (event) => {
             };
         }
 
-        let themeContent = fetchData.data.theme.file.content;
+        let themeContent = fetchData.data.themes.nodes[0].files.nodes[0].body.content
+
+        console.log('themeContent', themeContent)
 
         const customCode = `
         {%- if request.page_type == 'product' -%}
