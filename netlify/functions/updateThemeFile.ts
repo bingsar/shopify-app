@@ -25,19 +25,23 @@ export const handler: Handler = async (event) => {
             },
             body: JSON.stringify({
                 query: `
-                    query getThemeFile($themeId: ID!, $filename: String!) {
-                        theme(id: $themeId) {
-                            id
-                            file(filename: $filename) {
-                                content
+                    {
+                      themes(roles: MAIN, first: 1) {
+                        nodes {
+                          files(filenames: "*theme.liquid") {
+                            nodes {
+                              filename
+                              body {
+                                ... on OnlineStoreThemeFileBodyText {
+                                  content
+                                }
+                              }
                             }
+                          }
                         }
+                      }
                     }
                 `,
-                variables: {
-                    themeId: themeId,
-                    filename: 'layout/theme.liquid',
-                },
             }),
         });
 
