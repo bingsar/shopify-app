@@ -85,7 +85,7 @@ export const handler: Handler = async (event) => {
 
         const shopifyProductsData = await shopifyResponse.json();
         const shopifyProducts = shopifyProductsData.data.products.edges;
-
+        console.log('shopifyProducts', shopifyProducts)
         const matchedSkus: string[] = [];
 
         // Iterate over products and match SKUs
