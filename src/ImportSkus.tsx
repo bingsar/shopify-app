@@ -7,7 +7,10 @@ interface ImportSkusProps {
 }
 
 export const ImportSkus = ({apiKey, shop}: ImportSkusProps) => {
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  console.log('ImportSkus apiKEY', apiKey)
+  console.log('ImportSkus shop', shop)
 
   const handleImportSkus = async () => {
     try {
