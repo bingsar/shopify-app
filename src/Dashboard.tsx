@@ -192,50 +192,50 @@ const Dashboard = () => {
         <Page title="Dashboard">
                 <Layout.Section>
                     <div style={{display: 'grid', gap: '20px'}}>
-                    <Card>
-                        <div>
-                            {loading &&
-                                <SkeletonBodyText lines={3} />
-                            }
-                            {(!trillionApiKey && !loading) && (
-                                <>
-                                    <TextField
-                                        label="Trillion API Key"
-                                        value={apiKey}
-                                        onChange={(value) => setApiKey(value)}
-                                        autoComplete="off"
-
-                                    />
-                                    <br/>
-                                    <Button variant={'primary'} fullWidth={false} onClick={handleSaveApiKey}>
-                                        Save API Key
-                                    </Button>
-                                </>
-                            )}
-                            {(trillionApiKey && !loading) && (
-                                <div style={{ display: "inline-grid", gap: "10px" }}>
-                                    <Text variant="headingLg" as="h6">
-                                        Trillion Api Key
-                                    </Text>
-                                    <Tag>
-                                        {trillionApiKey}
-                                    </Tag>
-                                    <div style={{ display: "flex", gap: "20px" }}>
-                                        <Button variant="primary" tone="critical" fullWidth={false} onClick={handleDeleteApiKey}>
-                                            Delete
-                                        </Button>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </Card>
-                    {shop &&
                         <Card>
-                            {shop}
+                            <div>
+                                {loading &&
+                                    <SkeletonBodyText lines={3} />
+                                }
+                                {(!trillionApiKey && !loading) && (
+                                    <>
+                                        <TextField
+                                            label="Trillion API Key"
+                                            value={apiKey}
+                                            onChange={(value) => setApiKey(value)}
+                                            autoComplete="off"
+
+                                        />
+                                        <br/>
+                                        <Button variant={'primary'} fullWidth={false} onClick={handleSaveApiKey}>
+                                            Save API Key
+                                        </Button>
+                                    </>
+                                )}
+                                {(trillionApiKey && !loading) && (
+                                    <div style={{ display: "inline-grid", gap: "10px" }}>
+                                        <Text variant="headingLg" as="h6">
+                                            Trillion Api Key
+                                        </Text>
+                                        <Tag>
+                                            {trillionApiKey}
+                                        </Tag>
+                                        <div style={{ display: "flex", gap: "20px" }}>
+                                            <Button variant="primary" tone="critical" fullWidth={false} onClick={handleDeleteApiKey}>
+                                                Delete
+                                            </Button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </Card>
-                    }
+                        {shop &&
+                            <Card>
+                                {shop}
+                            </Card>
+                        }
+                        <ImportSkus apiKey={trillionApiKey} shop={shop} />
                     </div>
-                    <ImportSkus apiKey={trillionApiKey} shop={shop} />
                 </Layout.Section>
         </Page>
     );
