@@ -1,7 +1,12 @@
 import {Button, Card, SkeletonBodyText, Tag, Text, TextField} from "@shopify/polaris";
 import React, {useState} from "react";
 
-export const ImportSkus = (apiKey, shop) => {
+interface ImportSkusProps {
+    apiKey: string;
+    shop: string;
+}
+
+export const ImportSkus = ({apiKey, shop}: ImportSkusProps) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const handleImportSkus = async () => {
