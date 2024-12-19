@@ -43,14 +43,36 @@ export const handler: Handler = async (event) => {
 
         console.log('backendSkus', backendSkus)
 
-        const shopifyResponse = await fetch(
-            `https://${shop}/admin/api/2023-10/products.json`,
+        const fetchProductsQuery = `
             {
-                method: 'GET',
+                products(first: 250) {
+                    edges {
+                        node {
+                            id
+                            title
+                            variants(first: 100) {
+                                edges {
+                                    node {
+                                        id
+                                        sku
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        `;
+
+        const shopifyResponse = await fetch(
+            `https://${shop}/admin/api/2023-10/graphql.json`,
+            {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN,
                 },
+                body: JSON.stringify({ query: fetchProductsQuery }),
             }
         );
 
@@ -58,40 +80,64 @@ export const handler: Handler = async (event) => {
             throw new Error('Failed to fetch Shopify products');
         }
 
-        const shopifyProducts = (await shopifyResponse.json()).products;
+        const shopifyProductsData = await shopifyResponse.json();
+        const shopifyProducts = shopifyProductsData.data.products.edges;
 
         const matchedSkus: string[] = [];
 
-        for (const product of shopifyProducts) {
-            const matchingVariants = product.variants.filter((variant: any) =>
-                backendSkus.includes(variant.sku)
+        // Iterate over products and match SKUs
+        for (const productEdge of shopifyProducts) {
+            const product = productEdge.node;
+            const matchingVariants = product.variants.edges.filter((variantEdge: any) =>
+                backendSkus.includes(variantEdge.node.sku)
             );
 
             if (matchingVariants.length > 0) {
                 matchedSkus.push(product.id);
 
-                // Create metafield for the product
+                // GraphQL Mutation to create metafield
+                const createMetafieldMutation = `
+                    mutation {
+                        productUpdate(input: {
+                            id: "${product.id}",
+                            metafields: [
+                                {
+                                    namespace: "trillion",
+                                    key: "sku_exist",
+                                    value: "true",
+                                    type: "boolean"
+                                }
+                            ]
+                        }) {
+                            product {
+                                id
+                            }
+                            userErrors {
+                                field
+                                message
+                            }
+                        }
+                    }
+                `;
+
                 const metafieldResponse = await fetch(
-                    `https://${shop}/admin/api/2023-10/products/${product.id}/metafields.json`,
+                    `https://${shop}/admin/api/2023-10/graphql.json`,
                     {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN,
                         },
-                        body: JSON.stringify({
-                            metafield: {
-                                namespace: 'trillion',
-                                key: 'sku_exist',
-                                value: 'true',
-                                type: 'boolean',
-                            },
-                        }),
+                        body: JSON.stringify({ query: createMetafieldMutation }),
                     }
                 );
 
-                if (!metafieldResponse.ok) {
-                    console.error(`Failed to create metafield for product ${product.id}`);
+                const metafieldData = await metafieldResponse.json();
+                if (metafieldData.errors || metafieldData.data.productUpdate.userErrors.length > 0) {
+                    console.error(
+                        `Failed to create metafield for product ${product.id}:`,
+                        metafieldData.errors || metafieldData.data.productUpdate.userErrors
+                    );
                 }
             }
         }
