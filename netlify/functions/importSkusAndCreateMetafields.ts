@@ -27,6 +27,8 @@ export const handler: Handler = async (event: any) => {
 
         const SHOPIFY_ACCESS_TOKEN = data.access_token;
 
+        console.log('SHOPIFY_ACCESS_TOKEN', SHOPIFY_ACCESS_TOKEN)
+
         const backendResponse = await fetch(
             `${process.env.REACT_APP_BACKEND_URL}/trillionwebapp/products/skus?apiKey=${apiKey}`
         );
@@ -36,6 +38,8 @@ export const handler: Handler = async (event: any) => {
         }
 
         const backendSkus: string[] = await backendResponse.json();
+
+        console.log(backendSkus)
 
         const shopifyResponse = await fetch(
             `https://${shop}/admin/api/2023-10/products.json`,
