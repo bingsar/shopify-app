@@ -25,29 +25,32 @@ export const handler: Handler = async (event) => {
         const createMetafieldDefinition = async (shop: string, accessToken: string) => {
             const query = `
                 mutation {
-                  metafieldDefinitionCreate(
-                    definition: {
-                      namespace: "trillion"
-                      key: "sku_exist"
-                      name: "SKU Exists"
-                      type: "boolean"
-                      description: "Indicates if the product SKU exists in Trillion backend."
-                      ownerType: PRODUCT
-                      visibleToStorefrontApi: true
+                    metafieldDefinitionCreate(
+                        definition: {
+                            namespace: "trillion"
+                            key: "sku_exist"
+                            name: "SKU Exists"
+                            type: "boolean"
+                            description: "Indicates if the product SKU exists in Trillion backend."
+                            ownerType: PRODUCT
+                            visibleToStorefrontApi: true
+                        }
+                    ) {
+                        createdDefinition {
+                            id
+                            name
+                            namespace
+                            key
+                            type {
+                                name
+                                category
+                            }
+                        }
+                        userErrors {
+                            field
+                            message
+                        }
                     }
-                  ) {
-                    createdDefinition {
-                      id
-                      name
-                      namespace
-                      key
-                      type
-                    }
-                    userErrors {
-                      field
-                      message
-                    }
-                  }
                 }
               `;
 
