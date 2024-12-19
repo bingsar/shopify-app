@@ -2,7 +2,7 @@ import {Button, Card, SkeletonBodyText, Tag, Text, TextField} from "@shopify/pol
 import React, {useState} from "react";
 
 interface ImportSkusProps {
-    apiKey: string;
+    apiKey: string | null;
     shop: string;
 }
 

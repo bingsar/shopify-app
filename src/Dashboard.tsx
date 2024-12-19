@@ -235,7 +235,7 @@ const Dashboard = () => {
                         </Card>
                     }
                     </div>
-                    <ImportSkus apiKey={apiKey} shop={shop} />
+                    <ImportSkus apiKey={trillionApiKey} shop={shop} />
                 </Layout.Section>
         </Page>
     );
