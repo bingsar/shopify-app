@@ -94,7 +94,7 @@ export const handler: Handler = async (event) => {
             const matchingVariants = product.variants.edges.filter((variantEdge: any) =>
                 backendSkus.includes(variantEdge.node.sku)
             );
-
+            console.log('matchingVariants', matchingVariants)
             if (matchingVariants.length > 0) {
                 matchedSkus.push(product.id);
 
@@ -136,6 +136,8 @@ export const handler: Handler = async (event) => {
                 );
 
                 const metafieldData = await metafieldResponse.json();
+
+                console.log('metafieldData', metafieldData)
                 if (metafieldData.errors || metafieldData.data.productUpdate.userErrors.length > 0) {
                     console.error(
                         `Failed to create metafield for product ${product.id}:`,
