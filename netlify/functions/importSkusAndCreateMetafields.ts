@@ -2,6 +2,7 @@ import {Handler} from "@netlify/functions/dist/main";
 import {supabase} from "../../supabase";
 
 export const handler: Handler = async (event: any) => {
+    console.log('handler', event.body)
     try {
         const { apiKey, shop } = JSON.parse(event.body);
 
@@ -11,13 +12,14 @@ export const handler: Handler = async (event: any) => {
                 body: JSON.stringify({ error: 'Missing required parameters' }),
             };
         }
-
+        console.log('apiKey', apiKey)
+        console.log('shop', shop)
         const { data, error } = await supabase
             .from('stores')
             .select('access_token')
             .eq('shop_domain', shop)
             .single();
-
+        console.log('data', data)
         if (error || !data?.access_token) {
             return {
                 statusCode: 404,
@@ -39,7 +41,7 @@ export const handler: Handler = async (event: any) => {
 
         const backendSkus: string[] = await backendResponse.json();
 
-        console.log(backendSkus)
+        console.log('backendSkus', backendSkus)
 
         const shopifyResponse = await fetch(
             `https://${shop}/admin/api/2023-10/products.json`,
