@@ -117,6 +117,28 @@ const Dashboard = () => {
         }
     }
 
+    const createTrillionSkuExistDefinition = async (shop: string) => {
+        try {
+            const response = await fetch('/.netlify/functions/createTrillionSkuExistDefinition', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    shop,
+                }),
+            })
+            const data = await response.json();
+            if (data.success) {
+                console.log('Trillion Sku Exist definition was created')
+            } else {
+                console.error('Error with create Trillion Sku Exist definition request');
+            }
+        } catch (err) {
+            console.error('Failed to create Trillion Sku Exist definition:', err);
+        }
+    }
+
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const shopFromUrl = urlParams.get('shop');
@@ -163,6 +185,7 @@ const Dashboard = () => {
                     await uploadViewerElementFile(shop)
                     await uploadViewerScript(shop, apiKey)
                     await updateThemeFile(shop)
+                    await createTrillionSkuExistDefinition(shop)
                     setLoading(false)
                 } else {
                     console.error(data.error);

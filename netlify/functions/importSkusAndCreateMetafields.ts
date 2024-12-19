@@ -150,7 +150,7 @@ export const handler: Handler = async (event) => {
 
         return {
             statusCode: 200,
-            body: JSON.stringify({ matchedSkus }),
+            body: JSON.stringify({ success: true, message: 'Metafield created successfully' }),
         };
     } catch (error: any) {
         console.error('Error:', error.message);
