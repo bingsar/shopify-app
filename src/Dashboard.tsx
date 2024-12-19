@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {Page, TextField, Button, Card, Layout, Text, Tag, SkeletonBodyText} from '@shopify/polaris';
+import {ImportSkus} from "./ImportSkus";
 
 const Dashboard = () => {
     const [loading, setLoading] = useState<boolean>(true);
@@ -234,6 +235,7 @@ const Dashboard = () => {
                         </Card>
                     }
                     </div>
+                    <ImportSkus apiKey={apiKey} shop={shop} />
                 </Layout.Section>
         </Page>
     );
