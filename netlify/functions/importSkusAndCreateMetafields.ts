@@ -1,9 +1,9 @@
 import {Handler} from "@netlify/functions/dist/main";
 import {createClient} from "@supabase/supabase-js";
 
-const SUPABASE_URL = process.env.SUPABASE_URL || '';
-const SUPABASE_KEY = process.env.SUPABASE_KEY || '';
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const REACT_APP_REACT_APP_SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || '';
+const REACT_APP_REACT_APP_SUPABASE_KEY = process.env.REACT_APP_SUPABASE_KEY || '';
+const supabase = createClient(REACT_APP_REACT_APP_SUPABASE_URL, REACT_APP_REACT_APP_SUPABASE_KEY);
 
 export const handler: Handler = async (event: any) => {
     try {
@@ -32,7 +32,7 @@ export const handler: Handler = async (event: any) => {
         const SHOPIFY_ACCESS_TOKEN = data.access_token;
 
         const backendResponse = await fetch(
-            `${process.env.BACKEND_URL}/trillionwebapp/products/skus?apiKey=${apiKey}`
+            `${process.env.REACT_APP_BACKEND_URL}/trillionwebapp/products/skus?apiKey=${apiKey}`
         );
 
         if (!backendResponse.ok) {

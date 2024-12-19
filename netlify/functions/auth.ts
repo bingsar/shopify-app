@@ -3,13 +3,13 @@ import fetch from 'node-fetch';
 import crypto from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 
-const API_KEY = process.env.SHOPIFY_API_KEY || '';
-const API_SECRET = process.env.SHOPIFY_API_SECRET || '';
-const APP_NAME = process.env.SHOPIFY_APP_NAME || '';
-const SUPABASE_URL = process.env.SUPABASE_URL || '';
-const SUPABASE_KEY = process.env.SUPABASE_KEY || '';
+const REACT_APP_API_KEY = process.env.REACT_APP_SHOPIFY_API_KEY || '';
+const REACT_APP_API_SECRET = process.env.REACT_APP_SHOPIFY_API_SECRET || '';
+const REACT_APP_SHOPIFY_APP_NAME = process.env.REACT_APP_SHOPIFY_APP_NAME || '';
+const REACT_APP_SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || '';
+const REACT_APP_SUPABASE_KEY = process.env.REACT_APP_SUPABASE_KEY || '';
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createClient(REACT_APP_SUPABASE_URL, REACT_APP_SUPABASE_KEY);
 
 const validateHmac = (params: Record<string, string>, hmac: string): boolean => {
     const { hmac: _, ...rest } = params;
@@ -19,7 +19,7 @@ const validateHmac = (params: Record<string, string>, hmac: string): boolean => 
         .join('&');
 
     const generatedHmac = crypto
-        .createHmac('sha256', API_SECRET)
+        .createHmac('sha256', REACT_APP_API_SECRET)
         .update(message)
         .digest('hex');
 
@@ -54,8 +54,8 @@ export const handler: Handler = async (event) => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                client_id: API_KEY,
-                client_secret: API_SECRET,
+                client_id: REACT_APP_API_KEY,
+                client_secret: REACT_APP_API_SECRET,
                 code,
             }),
         });
@@ -87,7 +87,7 @@ export const handler: Handler = async (event) => {
             return {
                 statusCode: 302,
                 headers: {
-                    Location: `https://admin.shopify.com/store/${shopName}/apps/${APP_NAME}`,
+                    Location: `https://admin.shopify.com/store/${shopName}/apps/${REACT_APP_SHOPIFY_APP_NAME}`,
                 },
             };
         } else {

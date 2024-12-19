@@ -1,8 +1,8 @@
 import {createClient} from "@supabase/supabase-js";
 
-const SUPABASE_URL = process.env.SUPABASE_URL || '';
-const SUPABASE_KEY = process.env.SUPABASE_KEY || '';
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const REACT_APP_SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || '';
+const REACT_APP_SUPABASE_KEY = process.env.REACT_APP_SUPABASE_KEY || '';
+const supabase = createClient(REACT_APP_SUPABASE_URL, REACT_APP_SUPABASE_KEY);
 
 export const getShopAuthToken = async (shop: string) => {
     const { data, error } = await supabase
