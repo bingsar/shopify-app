@@ -1,14 +1,5 @@
 import { Handler } from '@netlify/functions';
-import { createClient } from '@supabase/supabase-js';
-
-const REACT_APP_SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || '';
-const REACT_APP_SUPABASE_KEY = process.env.REACT_APP_SUPABASE_KEY || '';
-
-if (!REACT_APP_SUPABASE_URL || !REACT_APP_SUPABASE_KEY) {
-    throw new Error('Missing Supabase credentials in environment variables');
-}
-
-const supabase = createClient(REACT_APP_SUPABASE_URL, REACT_APP_SUPABASE_KEY);
+import {supabase} from "../../supabase";
 
 interface StoreRequestBody {
     apiKey: string;

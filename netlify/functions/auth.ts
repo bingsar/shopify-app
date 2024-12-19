@@ -1,15 +1,11 @@
 import { Handler } from '@netlify/functions';
 import fetch from 'node-fetch';
 import crypto from 'crypto';
-import { createClient } from '@supabase/supabase-js';
+import {supabase} from "../../supabase";
 
 const REACT_APP_API_KEY = process.env.REACT_APP_SHOPIFY_API_KEY || '';
 const REACT_APP_API_SECRET = process.env.REACT_APP_SHOPIFY_API_SECRET || '';
 const REACT_APP_SHOPIFY_APP_NAME = process.env.REACT_APP_SHOPIFY_APP_NAME || '';
-const REACT_APP_SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || '';
-const REACT_APP_SUPABASE_KEY = process.env.REACT_APP_SUPABASE_KEY || '';
-
-const supabase = createClient(REACT_APP_SUPABASE_URL, REACT_APP_SUPABASE_KEY);
 
 const validateHmac = (params: Record<string, string>, hmac: string): boolean => {
     const { hmac: _, ...rest } = params;

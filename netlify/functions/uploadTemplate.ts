@@ -1,13 +1,8 @@
 import { Handler } from '@netlify/functions';
-import fetch from 'node-fetch';
-import { createClient } from '@supabase/supabase-js';
+import {supabase} from "../../supabase";
 import { getTrillionTryonContent } from './templates/trillion-tryon';
 import {getShopAuthToken} from "./helpers/getShopAuthToken";
 import {getActiveThemeId} from "./helpers/getActiveThemeId";
-
-const REACT_APP_SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || '';
-const REACT_APP_SUPABASE_KEY = process.env.REACT_APP_SUPABASE_KEY || '';
-const supabase = createClient(REACT_APP_SUPABASE_URL, REACT_APP_SUPABASE_KEY);
 
 export const handler: Handler = async (event) => {
     try {

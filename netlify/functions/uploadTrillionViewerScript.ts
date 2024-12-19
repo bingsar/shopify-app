@@ -1,5 +1,4 @@
 import { Handler } from '@netlify/functions';
-import fetch from 'node-fetch';
 import {getShopAuthToken} from "./helpers/getShopAuthToken";
 import {getActiveThemeId} from "./helpers/getActiveThemeId";
 import {getTrillionViewerScriptContent} from "./templates/trillion-viewer";

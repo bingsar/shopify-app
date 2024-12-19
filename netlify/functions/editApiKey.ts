@@ -1,15 +1,9 @@
 import { Handler } from '@netlify/functions';
-import { createClient } from '@supabase/supabase-js';
-
-// Initialize Supabase client
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL!;
-const supabaseKey = process.env.REACT_APP_SUPABASE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+import {supabase} from "../../supabase";
 
 const handler: Handler = async (event) => {
     const { apiKeyId, newApiKey } = JSON.parse(event.body || '{}');
 
-    // Check if necessary data is provided
     if (!apiKeyId || !newApiKey) {
         return {
             statusCode: 400,
@@ -17,7 +11,6 @@ const handler: Handler = async (event) => {
         };
     }
 
-    // Update the API key in Supabase
     const { data, error } = await supabase
         .from('api_keys')
         .update({ api_key: newApiKey })
