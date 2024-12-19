@@ -97,6 +97,7 @@ export const handler: Handler = async (event) => {
             console.log('matchingVariants', matchingVariants)
             if (matchingVariants.length > 0) {
                 matchedSkus.push(product.id);
+                console.log('product.id has', product.id)
 
                 // GraphQL Mutation to create metafield
                 const createMetafieldMutation = `
