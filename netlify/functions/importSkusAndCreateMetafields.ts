@@ -1,5 +1,6 @@
 import {Handler} from "@netlify/functions/dist/main";
 import {supabase} from "../../supabase";
+import {getActiveThemeId} from "./helpers/getActiveThemeId";
 
 export const handler: Handler = async (event) => {
     console.log('handler', event.body)
@@ -43,6 +44,8 @@ export const handler: Handler = async (event) => {
 
         console.log('backendSkus', backendSkus)
 
+        const themeId = await getActiveThemeId(SHOPIFY_ACCESS_TOKEN, shop)
+
         const fetchProductsQuery = `
             {
                 products(first: 250) {
@@ -65,7 +68,7 @@ export const handler: Handler = async (event) => {
         `;
 
         const shopifyResponse = await fetch(
-            `https://${shop}/admin/api/2023-10/graphql.json`,
+            `https://${shop}/admin/api/2024-10/graphql.json`,
             {
                 method: 'POST',
                 headers: {
@@ -121,7 +124,7 @@ export const handler: Handler = async (event) => {
                 `;
 
                 const metafieldResponse = await fetch(
-                    `https://${shop}/admin/api/2023-10/graphql.json`,
+                    `https://${shop}/admin/api/2024-10/graphql.json`,
                     {
                         method: 'POST',
                         headers: {
