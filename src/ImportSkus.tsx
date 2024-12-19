@@ -1,4 +1,4 @@
-import {Button, Card, SkeletonBodyText, Tag, Text, TextField} from "@shopify/polaris";
+import {Button, Card, SkeletonBodyText, Text} from "@shopify/polaris";
 import React, {useState} from "react";
 
 interface ImportSkusProps {

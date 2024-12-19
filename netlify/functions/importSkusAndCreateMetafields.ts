@@ -1,10 +1,10 @@
 import {Handler} from "@netlify/functions/dist/main";
 import {supabase} from "../../supabase";
 
-export const handler: Handler = async (event: any) => {
+export const handler: Handler = async (event) => {
     console.log('handler', event.body)
     try {
-        const { apiKey, shop } = JSON.parse(event.body);
+        const { shop, apiKey } = JSON.parse(event.body || '{}');
 
         if (!apiKey || !shop) {
             return {
@@ -32,7 +32,7 @@ export const handler: Handler = async (event: any) => {
         console.log('SHOPIFY_ACCESS_TOKEN', SHOPIFY_ACCESS_TOKEN)
 
         const backendResponse = await fetch(
-            `${process.env.REACT_APP_BACKEND_URL}/trillionwebapp/products/skus?apiKey=${apiKey}`
+            `${process.env.REACT_APP_BACKEND_URL}/api/trillionwebapp/products/skus?apiKey=${apiKey}`
         );
 
         if (!backendResponse.ok) {
