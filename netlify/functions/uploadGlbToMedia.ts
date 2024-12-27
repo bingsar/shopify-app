@@ -106,6 +106,8 @@ export const handler: Handler = async (event) => {
             }
 
             const { modelPath } = await backendResponse.json();
+            const response = await fetch(modelPath);
+            const fileBlob = await response.blob();
             const fileSize = await getFileSizeByUrl(modelPath)
 
             if (!modelPath) {
@@ -174,7 +176,7 @@ export const handler: Handler = async (event) => {
             stagedTarget.parameters.forEach((param: any) => {
                 formData.append(param.name, param.value);
             });
-            formData.append("file", modelPath);
+            formData.append("file", fileBlob, `${sku}.glb`);
 
             const uploadResponse = await fetch(stagedTarget.url, {
                 method: "POST",
