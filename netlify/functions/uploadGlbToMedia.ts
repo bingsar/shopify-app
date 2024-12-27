@@ -1,17 +1,6 @@
 import { Handler } from "@netlify/functions/dist/main";
 import { getShopAuthToken } from "./helpers/getShopAuthToken";
-
-async function getRemoteFileSize(modelPath) {
-    const response = await fetch(modelPath, { method: "HEAD" });
-    if (!response.ok) {
-        throw new Error(`Failed to fetch file size from URL: ${modelPath}`);
-    }
-    const contentLength = response.headers.get("content-length");
-    if (!contentLength) {
-        throw new Error(`Content-Length header is missing for URL: ${modelPath}`);
-    }
-    return contentLength; // Already a string
-}
+import {getFileSizeByUrl} from "./helpers/getFileSizeByUrl";
 
 export const handler: Handler = async (event) => {
     try {
@@ -127,8 +116,8 @@ export const handler: Handler = async (event) => {
                 continue;
             }
 
-            const fileSize = await getRemoteFileSize(modelPath)
-
+            const fileSize = await getFileSizeByUrl(modelPath)
+            console.log('fileSize', fileSize)
             console.log('modelPath', modelPath);
 
             // Step 1: Create staged upload
