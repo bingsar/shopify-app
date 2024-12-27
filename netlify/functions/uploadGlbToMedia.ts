@@ -2,14 +2,13 @@ import { Handler } from "@netlify/functions/dist/main";
 import {getShopAuthToken} from "./helpers/getShopAuthToken";
 
 export const handler: Handler = async (event) => {
-    console.log('handler', event.body);
     try {
         const { shop_domain, trillionApiKey } = JSON.parse(event.body || '{}');
 
-        if (!shop_domain) {
+        if (!shop_domain || !trillionApiKey) {
             return {
                 statusCode: 400,
-                body: JSON.stringify({ error: 'Missing required parameters' }),
+                body: JSON.stringify({ error: 'Missing required parameters shop_domain or ApiKey' }),
             };
         }
 

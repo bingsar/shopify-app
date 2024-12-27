@@ -201,7 +201,7 @@ const Dashboard = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ shop_domain: shop, trillionApiKey: apiKey }),
+            body: JSON.stringify({ shop_domain: shop }),
         });
 
         if (!response.ok) {
@@ -218,7 +218,7 @@ const Dashboard = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ shop_domain: shop }),
+            body: JSON.stringify({ shop_domain: shop, trillionApiKey: apiKey }),
         });
 
         if (!response.ok) {
