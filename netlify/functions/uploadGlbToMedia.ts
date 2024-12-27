@@ -94,9 +94,7 @@ export const handler: Handler = async (event) => {
 
             console.log('trillionApiKey', trillionApiKey)
 
-            const url = await fetch(
-                `${process.env.REACT_APP_BACKEND_URL}/api/trillionwebapp/config/viewer/${encodeURIComponent(sku)}?key=${encodeURIComponent(trillionApiKey)}`
-            );
+            const url = `${process.env.REACT_APP_BACKEND_URL}/api/trillionwebapp/config/viewer/${encodeURIComponent(sku)}?key=${encodeURIComponent(trillionApiKey)}`
 
             const backendResponse = await fetch(url, {
                 method: 'GET',
