@@ -137,7 +137,7 @@ export const handler: Handler = async (event) => {
                 {
                     filename: `${sku}.glb`,
                     mimeType: "model/gltf-binary",
-                    resource: "MODEL_3D"
+                    resource: "MODEL_3D",
                     httpMethod: "POST",
                 }
             ];
