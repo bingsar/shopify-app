@@ -4,16 +4,16 @@ import {getShopAuthToken} from "./helpers/getShopAuthToken";
 export const handler: Handler = async (event) => {
     console.log('handler', event.body);
     try {
-        const { shop_domain } = JSON.parse(event.body || '{}');
+        const { shop, trillionApiKey } = JSON.parse(event.body || '{}');
 
-        if (!shop_domain) {
+        if (!shop) {
             return {
                 statusCode: 400,
                 body: JSON.stringify({ error: 'Missing required parameters' }),
             };
         }
 
-        const SHOPIFY_ACCESS_TOKEN = await getShopAuthToken(shop_domain)
+        const SHOPIFY_ACCESS_TOKEN = await getShopAuthToken(shop)
 
         const fetchProductsWithMetafieldsQuery = `
             {
@@ -46,7 +46,7 @@ export const handler: Handler = async (event) => {
         `;
 
         const shopifyResponse = await fetch(
-            `https://${shop_domain}/admin/api/2024-10/graphql.json`,
+            `https://${shop}/admin/api/2024-10/graphql.json`,
             {
                 method: 'POST',
                 headers: {
@@ -94,7 +94,7 @@ export const handler: Handler = async (event) => {
             }
 
             const backendResponse = await fetch(
-                `${process.env.REACT_APP_BACKEND_URL}/api/trillionwebapp/config/viewer/${sku}`
+                `${process.env.REACT_APP_BACKEND_URL}/api/trillionwebapp/config/viewer/${sku}?key=${trillionApiKey}`
             );
 
             if (!backendResponse.ok) {
@@ -108,6 +108,8 @@ export const handler: Handler = async (event) => {
                 console.error(`No glbFileUrl found for SKU: ${modelPath}`);
                 continue;
             }
+
+            console.log('modelPath', modelPath)
 
             // GraphQL Mutation to upload `.glb` file to product media
             const uploadMediaMutation = `
@@ -132,7 +134,7 @@ export const handler: Handler = async (event) => {
             `;
 
             const mediaResponse = await fetch(
-                `https://${shop_domain}/admin/api/2024-10/graphql.json`,
+                `https://${shop}/admin/api/2024-10/graphql.json`,
                 {
                     method: 'POST',
                     headers: {

@@ -4,9 +4,8 @@ import {ImportSkus} from "./ImportSkus";
 
 const Dashboard = () => {
     const [loading, setLoading] = useState<boolean>(true);
-    const [apiKey, setApiKey] = useState('');
     const [shop, setShop] = useState<string>('');
-    const [trillionApiKey, setTrillionApiKey] = useState<string | null>(null)
+    const [trillionApiKey, setTrillionApiKey] = useState<string>('')
 
     const fetchApiKey = async (shop: string) => {
         try {
@@ -174,16 +173,16 @@ const Dashboard = () => {
             },
             body: JSON.stringify({
                 shop,
-                apiKey,
+                trillionApiKey,
             }),
         })
             .then((response) => response.json())
             .then(async (data) => {
                 if (data.success) {
                     await fetchApiKey(shop)
-                    await createPageRequest(shop, apiKey)
+                    await createPageRequest(shop, trillionApiKey)
                     await uploadViewerElementFile(shop)
-                    await uploadViewerScript(shop, apiKey)
+                    await uploadViewerScript(shop, trillionApiKey)
                     await updateThemeFile(shop)
                     await createTrillionSkuExistDefinition(shop)
                     setLoading(false)
@@ -218,7 +217,7 @@ const Dashboard = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ shop_domain: shop }),
+            body: JSON.stringify({ shop: shop, trillionApiKey: trillionApiKey }),
         });
 
         if (!response.ok) {
@@ -241,8 +240,8 @@ const Dashboard = () => {
                                     <>
                                         <TextField
                                             label="Trillion API Key"
-                                            value={apiKey}
-                                            onChange={(value) => setApiKey(value)}
+                                            value={trillionApiKey}
+                                            onChange={(value) => setTrillionApiKey(value)}
                                             autoComplete="off"
 
                                         />
