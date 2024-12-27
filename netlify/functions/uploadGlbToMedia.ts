@@ -186,7 +186,7 @@ export const handler: Handler = async (event) => {
                             id: "${product.id}",
                             media: [
                                 {
-                                    mediaContentType: MODEL_3D,
+                                    mediaContentType: "MODEL_3D",
                                     alt: "3D Model",
                                     originalSource: "${stagedTarget.resourceUrl}"
                                 }
