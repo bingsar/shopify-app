@@ -184,14 +184,14 @@ export const handler: Handler = async (event) => {
                     productUpdate(
                         input: {
                             id: "${product.id}",
-                            media: [
+                        },
+                        media: [
                                 {
                                     mediaContentType: "MODEL_3D",
                                     alt: "3D Model",
                                     originalSource: "${stagedTarget.resourceUrl}"
                                 }
                             ]
-                        }
                     ) {
                         product {
                             id
