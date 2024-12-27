@@ -215,7 +215,7 @@ export const handler: Handler = async (event) => {
                 id: product.id,
                 files: [
                     {
-                        contentType: "FILE",
+                        contentType: "MODEL_3D",
                         alt: "3D Model",
                         originalSource: fileCdnUrl
                     }
