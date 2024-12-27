@@ -1,6 +1,5 @@
 import { Handler } from "@netlify/functions/dist/main";
 import { getShopAuthToken } from "./helpers/getShopAuthToken";
-import {getFileSizeByUrl} from "./helpers/getFileSizeByUrl";
 
 export const handler: Handler = async (event) => {
     try {
@@ -81,8 +80,6 @@ export const handler: Handler = async (event) => {
             );
         });
 
-        console.log('Filtered Products:', filteredProducts);
-
         for (const productEdge of filteredProducts) {
             const product = productEdge.node;
             const sku = product.variants.edges[0]?.node.sku;
@@ -91,8 +88,6 @@ export const handler: Handler = async (event) => {
                 console.error(`No SKU found for product ${product.id}`);
                 continue;
             }
-
-            console.log('trillionApiKey', trillionApiKey);
 
             const url = `${process.env.REACT_APP_BACKEND_URL}/api/trillionwebapp/config/viewer/${encodeURIComponent(sku)}?key=${encodeURIComponent(trillionApiKey)}`;
 
@@ -116,11 +111,9 @@ export const handler: Handler = async (event) => {
                 continue;
             }
 
-            const fileSize = await getFileSizeByUrl(modelPath)
-            console.log('fileSize', fileSize)
-            console.log('modelPath', modelPath);
+            console.log('Uploading GLB file to Shopify Files...');
 
-            // Step 1: Create staged upload
+            // Step 1: Create staged upload for Shopify Files
             const stagedUploadsCreateMutation = `
                 mutation stagedUploadsCreate($input: [StagedUploadInput!]!) {
                     stagedUploadsCreate(input: $input) {
@@ -145,7 +138,6 @@ export const handler: Handler = async (event) => {
                     filename: `${sku}.glb`,
                     mimeType: "model/gltf-binary",
                     resource: "FILE",
-                    fileSize: fileSize.toString(),
                     httpMethod: "POST",
                 }
             ];
@@ -175,8 +167,24 @@ export const handler: Handler = async (event) => {
             const stagedTarget = stagedData.data.stagedUploadsCreate.stagedTargets[0];
 
             // Step 2: Upload file to the staged URL
-            console.log('stagedTarget.url', stagedTarget.url)
-            console.log('stagedTarget.resourceUrl', stagedTarget.resourceUrl)
+            const formData = new FormData();
+            stagedTarget.parameters.forEach((param: any) => {
+                formData.append(param.name, param.value);
+            });
+            formData.append("file", modelPath);
+
+            const uploadResponse = await fetch(stagedTarget.url, {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!uploadResponse.ok) {
+                console.error(`Failed to upload file to staged URL for product ${product.id}`);
+                continue;
+            }
+
+            console.log('File uploaded to Shopify Files successfully. Retrieving CDN URL...');
+            const fileCdnUrl = stagedTarget.resourceUrl;
 
             // Step 3: Attach uploaded media to product
             const productUpdateMutation = `
@@ -184,14 +192,14 @@ export const handler: Handler = async (event) => {
                     productUpdate(
                         input: {
                             id: "${product.id}",
-                        },
-                        media: [
+                            media: [
                                 {
                                     mediaContentType: MODEL_3D,
                                     alt: "3D Model",
-                                    originalSource: "${stagedTarget.resourceUrl}"
+                                    originalSource: "${fileCdnUrl}"
                                 }
                             ]
+                        }
                     ) {
                         product {
                             id
