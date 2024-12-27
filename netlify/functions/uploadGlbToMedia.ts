@@ -93,8 +93,10 @@ export const handler: Handler = async (event) => {
                 continue;
             }
 
+            console.log('trillionApiKey', trillionApiKey)
+
             const backendResponse = await fetch(
-                `${process.env.REACT_APP_BACKEND_URL}/api/trillionwebapp/config/viewer/${sku}?key=${trillionApiKey}`
+                `${process.env.REACT_APP_BACKEND_URL}/api/trillionwebapp/config/viewer/${encodeURIComponent(sku)}?key=${encodeURIComponent(trillionApiKey)}`
             );
 
             if (!backendResponse.ok) {
