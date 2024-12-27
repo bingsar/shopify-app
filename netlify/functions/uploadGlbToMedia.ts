@@ -22,6 +22,14 @@ export const handler: Handler = async (event) => {
                         node {
                             id
                             title
+                            variants(first: 10) {
+                                edges {
+                                    node {
+                                        id
+                                        sku
+                                    }
+                                }
+                            }
                             metafields(first: 10, namespace: "trillion") {
                                 edges {
                                     node {
@@ -30,6 +38,7 @@ export const handler: Handler = async (event) => {
                                     }
                                 }
                             }
+                            
                         }
                     }
                 }
