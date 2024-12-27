@@ -175,21 +175,8 @@ export const handler: Handler = async (event) => {
             const stagedTarget = stagedData.data.stagedUploadsCreate.stagedTargets[0];
 
             // Step 2: Upload file to the staged URL
-            const formData = new FormData();
-            stagedTarget.parameters.forEach((param: any) => {
-                formData.append(param.name, param.value);
-            });
-            formData.append("file", modelPath);
-
-            const uploadResponse = await fetch(stagedTarget.url, {
-                method: "POST",
-                body: formData,
-            });
-
-            if (!uploadResponse.ok) {
-                console.error(`Failed to upload file to staged URL for product ${product.id}`);
-                continue;
-            }
+            console.log('stagedTarget.url', stagedTarget.url)
+            console.log('stagedTarget.resourceUrl', stagedTarget.resourceUrl)
 
             // Step 3: Attach uploaded media to product
             const productUpdateMutation = `
@@ -201,7 +188,7 @@ export const handler: Handler = async (event) => {
                                 {
                                     mediaContentType: MODEL_3D,
                                     alt: "3D Model",
-                                    originalSource: "${stagedTarget.resourceUrl}"
+                                    originalSource: "${stagedTarget.url}"
                                 }
                             ]
                         }
