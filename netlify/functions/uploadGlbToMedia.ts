@@ -188,7 +188,7 @@ export const handler: Handler = async (event) => {
 
             // Step 3: Attach uploaded media to product using productSet
             const productSetMutation = `
-                mutation createProductAsynchronous($productSet: ProductSetInput!, $synchronous: Boolean!) {
+                mutation createProductAsynchronous($productSet: ProductSetInput!) {
                     productSet(synchronous: true, input: $productSet) {
                         product {
                             id
