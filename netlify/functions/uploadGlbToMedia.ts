@@ -4,16 +4,16 @@ import {getShopAuthToken} from "./helpers/getShopAuthToken";
 export const handler: Handler = async (event) => {
     console.log('handler', event.body);
     try {
-        const { shop, trillionApiKey } = JSON.parse(event.body || '{}');
+        const { shop_domain, trillionApiKey } = JSON.parse(event.body || '{}');
 
-        if (!shop) {
+        if (!shop_domain) {
             return {
                 statusCode: 400,
                 body: JSON.stringify({ error: 'Missing required parameters' }),
             };
         }
 
-        const SHOPIFY_ACCESS_TOKEN = await getShopAuthToken(shop)
+        const SHOPIFY_ACCESS_TOKEN = await getShopAuthToken(shop_domain)
 
         const fetchProductsWithMetafieldsQuery = `
             {
@@ -46,7 +46,7 @@ export const handler: Handler = async (event) => {
         `;
 
         const shopifyResponse = await fetch(
-            `https://${shop}/admin/api/2024-10/graphql.json`,
+            `https://${shop_domain}/admin/api/2024-10/graphql.json`,
             {
                 method: 'POST',
                 headers: {
@@ -136,7 +136,7 @@ export const handler: Handler = async (event) => {
             `;
 
             const mediaResponse = await fetch(
-                `https://${shop}/admin/api/2024-10/graphql.json`,
+                `https://${shop_domain}/admin/api/2024-10/graphql.json`,
                 {
                     method: 'POST',
                     headers: {

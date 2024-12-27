@@ -4,8 +4,9 @@ import {ImportSkus} from "./ImportSkus";
 
 const Dashboard = () => {
     const [loading, setLoading] = useState<boolean>(true);
+    const [apiKey, setApiKey] = useState('');
     const [shop, setShop] = useState<string>('');
-    const [trillionApiKey, setTrillionApiKey] = useState<string>('')
+    const [trillionApiKey, setTrillionApiKey] = useState<string | null>(null)
 
     const fetchApiKey = async (shop: string) => {
         try {
@@ -14,7 +15,7 @@ const Dashboard = () => {
             if (data.trillion_api_key) {
                 setTrillionApiKey(data.trillion_api_key);
             } else {
-                setTrillionApiKey('')
+                setTrillionApiKey(null)
                 console.error('No API key found');
             }
         } catch (err) {
@@ -173,16 +174,16 @@ const Dashboard = () => {
             },
             body: JSON.stringify({
                 shop,
-                trillionApiKey,
+                apiKey,
             }),
         })
             .then((response) => response.json())
             .then(async (data) => {
                 if (data.success) {
                     await fetchApiKey(shop)
-                    await createPageRequest(shop, trillionApiKey)
+                    await createPageRequest(shop, apiKey)
                     await uploadViewerElementFile(shop)
-                    await uploadViewerScript(shop, trillionApiKey)
+                    await uploadViewerScript(shop, apiKey)
                     await updateThemeFile(shop)
                     await createTrillionSkuExistDefinition(shop)
                     setLoading(false)
@@ -200,7 +201,7 @@ const Dashboard = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ shop_domain: shop }),
+            body: JSON.stringify({ shop_domain: shop, trillionApiKey: apiKey }),
         });
 
         if (!response.ok) {
@@ -217,7 +218,7 @@ const Dashboard = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ shop: shop, trillionApiKey: trillionApiKey }),
+            body: JSON.stringify({ shop_domain: shop }),
         });
 
         if (!response.ok) {
@@ -240,8 +241,8 @@ const Dashboard = () => {
                                     <>
                                         <TextField
                                             label="Trillion API Key"
-                                            value={trillionApiKey}
-                                            onChange={(value) => setTrillionApiKey(value)}
+                                            value={apiKey}
+                                            onChange={(value) => setApiKey(value)}
                                             autoComplete="off"
 
                                         />
