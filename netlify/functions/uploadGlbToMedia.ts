@@ -185,6 +185,7 @@ export const handler: Handler = async (event) => {
 
             if (!uploadResponse.ok) {
                 console.error(`Failed to upload file to staged URL for product ${product.id}`);
+                console.error('Response:', await uploadResponse.text())
                 continue;
             }
 
