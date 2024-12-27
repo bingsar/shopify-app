@@ -144,7 +144,7 @@ export const handler: Handler = async (event) => {
                 {
                     filename: `${sku}.glb`,
                     mimeType: "model/gltf-binary",
-                    resource: "MODEL_3D",
+                    resource: "FILE",
                     fileSize: fileSize.toString(),
                     httpMethod: "POST",
                 }
@@ -188,7 +188,7 @@ export const handler: Handler = async (event) => {
                                 {
                                     mediaContentType: MODEL_3D,
                                     alt: "3D Model",
-                                    originalSource: "${stagedTarget.url}"
+                                    originalSource: "${stagedTarget.resourceUrl}"
                                 }
                             ]
                         }
