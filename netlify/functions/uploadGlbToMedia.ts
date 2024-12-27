@@ -1,6 +1,18 @@
 import { Handler } from "@netlify/functions/dist/main";
 import { getShopAuthToken } from "./helpers/getShopAuthToken";
 
+async function getRemoteFileSize(modelPath) {
+    const response = await fetch(modelPath, { method: "HEAD" });
+    if (!response.ok) {
+        throw new Error(`Failed to fetch file size from URL: ${modelPath}`);
+    }
+    const contentLength = response.headers.get("content-length");
+    if (!contentLength) {
+        throw new Error(`Content-Length header is missing for URL: ${modelPath}`);
+    }
+    return contentLength; // Already a string
+}
+
 export const handler: Handler = async (event) => {
     try {
         const { shop_domain, trillionApiKey } = JSON.parse(event.body || '{}');
@@ -115,6 +127,8 @@ export const handler: Handler = async (event) => {
                 continue;
             }
 
+            const fileSize = await getRemoteFileSize(modelPath)
+
             console.log('modelPath', modelPath);
 
             // Step 1: Create staged upload
@@ -142,6 +156,7 @@ export const handler: Handler = async (event) => {
                     filename: `${sku}.glb`,
                     mimeType: "model/gltf-binary",
                     resource: "MODEL_3D",
+                    fileSize: fileSize.toString(),
                     httpMethod: "POST",
                 }
             ];
