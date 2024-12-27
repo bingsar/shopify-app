@@ -211,7 +211,7 @@ const Dashboard = () => {
         return response.json();
     };
 
-    const handleUploadGLB = async (shop: string) => {
+    const handleUploadGLB = async () => {
         setLoading(true)
         const response = await fetch(`/.netlify/functions/uploadGlbToMedia`, {
             method: 'POST',
