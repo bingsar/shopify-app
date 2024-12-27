@@ -1,5 +1,5 @@
 import { Handler } from "@netlify/functions/dist/main";
-import {getShopAuthToken} from "./helpers/getShopAuthToken";
+import { getShopAuthToken } from "./helpers/getShopAuthToken";
 
 export const handler: Handler = async (event) => {
     try {
@@ -12,7 +12,7 @@ export const handler: Handler = async (event) => {
             };
         }
 
-        const SHOPIFY_ACCESS_TOKEN = await getShopAuthToken(shop_domain)
+        const SHOPIFY_ACCESS_TOKEN = await getShopAuthToken(shop_domain);
 
         const fetchProductsWithMetafieldsQuery = `
             {
@@ -37,7 +37,6 @@ export const handler: Handler = async (event) => {
                                     }
                                 }
                             }
-                            
                         }
                     }
                 }
@@ -92,9 +91,9 @@ export const handler: Handler = async (event) => {
                 continue;
             }
 
-            console.log('trillionApiKey', trillionApiKey)
+            console.log('trillionApiKey', trillionApiKey);
 
-            const url = `${process.env.REACT_APP_BACKEND_URL}/api/trillionwebapp/config/viewer/${encodeURIComponent(sku)}?key=${encodeURIComponent(trillionApiKey)}`
+            const url = `${process.env.REACT_APP_BACKEND_URL}/api/trillionwebapp/config/viewer/${encodeURIComponent(sku)}?key=${encodeURIComponent(trillionApiKey)}`;
 
             const backendResponse = await fetch(url, {
                 method: 'GET',
@@ -112,13 +111,84 @@ export const handler: Handler = async (event) => {
             const { modelPath } = await backendResponse.json();
 
             if (!modelPath) {
-                console.error(`No glbFileUrl found for SKU: ${modelPath}`);
+                console.error(`No glbFileUrl found for SKU: ${sku}`);
                 continue;
             }
 
-            console.log('modelPath', modelPath)
+            console.log('modelPath', modelPath);
 
-            // GraphQL Mutation to upload `.glb` file to product media
+            // Step 1: Create staged upload
+            const stagedUploadsCreateMutation = `
+                mutation stagedUploadsCreate($input: [StagedUploadInput!]!) {
+                    stagedUploadsCreate(input: $input) {
+                        stagedTargets {
+                            url
+                            resourceUrl
+                            parameters {
+                                name
+                                value
+                            }
+                        }
+                        userErrors {
+                            field
+                            message
+                        }
+                    }
+                }
+            `;
+
+            const stagedUploadInput = [
+                {
+                    filename: `${sku}.glb`,
+                    mimeType: "model/gltf-binary",
+                    resource: "MODEL_3D",
+                    fileSize: 123456, // Replace with actual file size in bytes
+                    httpMethod: "POST",
+                }
+            ];
+
+            const stagedResponse = await fetch(
+                `https://${shop_domain}/admin/api/2024-10/graphql.json`,
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN,
+                    },
+                    body: JSON.stringify({ query: stagedUploadsCreateMutation, variables: { input: stagedUploadInput } }),
+                }
+            );
+
+            const stagedData = await stagedResponse.json();
+
+            if (stagedData.errors || stagedData.data.stagedUploadsCreate.userErrors.length > 0) {
+                console.error(
+                    `Failed to create staged upload for product ${product.id}:`,
+                    stagedData.errors || stagedData.data.stagedUploadsCreate.userErrors
+                );
+                continue;
+            }
+
+            const stagedTarget = stagedData.data.stagedUploadsCreate.stagedTargets[0];
+
+            // Step 2: Upload file to the staged URL
+            const formData = new FormData();
+            stagedTarget.parameters.forEach((param: any) => {
+                formData.append(param.name, param.value);
+            });
+            formData.append("file", modelPath);
+
+            const uploadResponse = await fetch(stagedTarget.url, {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!uploadResponse.ok) {
+                console.error(`Failed to upload file to staged URL for product ${product.id}`);
+                continue;
+            }
+
+            // Step 3: Attach uploaded media to product
             const productUpdateMutation = `
                 mutation {
                     productUpdate(
@@ -128,26 +198,13 @@ export const handler: Handler = async (event) => {
                                 {
                                     mediaContentType: MODEL_3D,
                                     alt: "3D Model",
-                                    originalSource: "${modelPath}"
+                                    originalSource: "${stagedTarget.resourceUrl}"
                                 }
                             ]
                         }
                     ) {
                         product {
                             id
-                            media(first: 5) {
-                                edges {
-                                    node {
-                                        ... on Model3d {
-                                            id
-                                            alt
-                                            previewImage {
-                                                originalSrc
-                                            }
-                                        }
-                                    }
-                                }
-                            }
                         }
                         userErrors {
                             field
@@ -173,11 +230,11 @@ export const handler: Handler = async (event) => {
 
             if (mediaData.errors || mediaData.data.productUpdate.userErrors.length > 0) {
                 console.error(
-                    `Failed to upload media for product ${product.id}:`,
+                    `Failed to attach media to product ${product.id}:`,
                     mediaData.errors || mediaData.data.productUpdate.userErrors
                 );
             } else {
-                console.log(`Successfully uploaded media for product ${product.id}`);
+                console.log(`Successfully attached media to product ${product.id}`);
             }
         }
 
