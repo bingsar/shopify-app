@@ -1,5 +1,6 @@
 import { Handler } from "@netlify/functions/dist/main";
 import { getShopAuthToken } from "./helpers/getShopAuthToken";
+import {getFileSizeByUrl} from "./helpers/getFileSizeByUrl";
 
 export const handler: Handler = async (event) => {
     try {
@@ -105,6 +106,7 @@ export const handler: Handler = async (event) => {
             }
 
             const { modelPath } = await backendResponse.json();
+            const fileSize = await getFileSizeByUrl(modelPath)
 
             if (!modelPath) {
                 console.error(`No glbFileUrl found for SKU: ${sku}`);
@@ -138,6 +140,7 @@ export const handler: Handler = async (event) => {
                     filename: `${sku}.glb`,
                     mimeType: "model/gltf-binary",
                     resource: "MODEL_3D",
+                    fileSize: fileSize,
                     httpMethod: "POST",
                 }
             ];
