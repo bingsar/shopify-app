@@ -211,6 +211,23 @@ const Dashboard = () => {
         return response.json();
     };
 
+    const handleUploadGLB = async (shop: string) => {
+        setLoading(true)
+        const response = await fetch(`/.netlify/functions/uploadGlbToMedia`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ shop_domain: shop }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete API key');
+        }
+        setLoading(false)
+        return response.json();
+    }
+
     return (
         <Page title="Dashboard">
                 <Layout.Section>
@@ -258,6 +275,12 @@ const Dashboard = () => {
                             </Card>
                         }
                         <ImportSkus apiKey={trillionApiKey} shop={shop} />
+
+                        <Card>
+                            <Button variant="primary" tone="critical" fullWidth={false} onClick={handleUploadGLB}>
+                                Upload GLB
+                            </Button>
+                        </Card>
                     </div>
                 </Layout.Section>
         </Page>
