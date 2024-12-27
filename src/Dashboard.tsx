@@ -201,7 +201,7 @@ const Dashboard = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ shop_domain: shop }),
+            body: JSON.stringify({ shop_domain: shop, trillionApiKey: apiKey }),
         });
 
         if (!response.ok) {
@@ -211,7 +211,7 @@ const Dashboard = () => {
         return response.json();
     };
 
-    const handleUploadGLB = async (apiKey) => {
+    const handleUploadGLB = async () => {
         setLoading(true)
         const response = await fetch(`/.netlify/functions/uploadGlbToMedia`, {
             method: 'POST',
@@ -277,7 +277,7 @@ const Dashboard = () => {
                         <ImportSkus apiKey={trillionApiKey} shop={shop} />
 
                         <Card>
-                            <Button variant="primary" tone="success" fullWidth={false} onClick={() => handleUploadGLB(apiKey)}>
+                            <Button variant="primary" tone="success" fullWidth={false} onClick={handleUploadGLB}>
                                 Upload GLB
                             </Button>
                         </Card>

@@ -94,9 +94,17 @@ export const handler: Handler = async (event) => {
 
             console.log('trillionApiKey', trillionApiKey)
 
-            const backendResponse = await fetch(
+            const url = await fetch(
                 `${process.env.REACT_APP_BACKEND_URL}/api/trillionwebapp/config/viewer/${encodeURIComponent(sku)}?key=${encodeURIComponent(trillionApiKey)}`
             );
+
+            const backendResponse = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Referer': `https://${shop_domain}`,
+                },
+            });
 
             if (!backendResponse.ok) {
                 console.error(`Failed to fetch glbFileUrl for SKU: ${sku}`);
