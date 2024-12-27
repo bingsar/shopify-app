@@ -119,18 +119,35 @@ export const handler: Handler = async (event) => {
             console.log('modelPath', modelPath)
 
             // GraphQL Mutation to upload `.glb` file to product media
-            const uploadMediaMutation = `
+            const productUpdateMutation = `
                 mutation {
-                    productCreateMedia(
-                        productId: "${product.id}",
-                        media: {
-                            originalSource: "${modelPath}",
-                            mediaContentType: MODEL_3D
+                    productUpdate(
+                        input: {
+                            id: "${product.id}",
+                            media: [
+                                {
+                                    mediaContentType: MODEL_3D,
+                                    alt: "3D Model",
+                                    originalSource: "${modelPath}"
+                                }
+                            ]
                         }
                     ) {
-                        media {
-                            alt
+                        product {
                             id
+                            media(first: 5) {
+                                edges {
+                                    node {
+                                        ... on Model3d {
+                                            id
+                                            alt
+                                            previewImage {
+                                                originalSrc
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                         userErrors {
                             field
@@ -148,16 +165,16 @@ export const handler: Handler = async (event) => {
                         'Content-Type': 'application/json',
                         'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN,
                     },
-                    body: JSON.stringify({ query: uploadMediaMutation }),
+                    body: JSON.stringify({ query: productUpdateMutation }),
                 }
             );
 
             const mediaData = await mediaResponse.json();
 
-            if (mediaData.errors || mediaData.data.productCreateMedia.userErrors.length > 0) {
+            if (mediaData.errors || mediaData.data.productUpdate.userErrors.length > 0) {
                 console.error(
                     `Failed to upload media for product ${product.id}:`,
-                    mediaData.errors || mediaData.data.productCreateMedia.userErrors
+                    mediaData.errors || mediaData.data.productUpdate.userErrors
                 );
             } else {
                 console.log(`Successfully uploaded media for product ${product.id}`);
