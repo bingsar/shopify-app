@@ -186,25 +186,26 @@ export const handler: Handler = async (event) => {
             console.log('File uploaded to Shopify Files successfully. Retrieving CDN URL...');
             const fileCdnUrl = stagedTarget.resourceUrl;
 
-            // Step 3: Attach uploaded media to product
-            const productUpdateMutation = `
-                mutation {
-                    productUpdate(
-                        input: {
-                            id: "${product.id}",
-                            media: [
-                                {
-                                    mediaContentType: MODEL_3D,
-                                    alt: "3D Model",
-                                    originalSource: "${fileCdnUrl}"
-                                }
-                            ]
-                        }
-                    ) {
+
+            console.log('fileCdnUrl', fileCdnUrl)
+            // Step 3: Attach uploaded media to product using productSet
+            const productSetMutation = `
+                mutation createProductAsynchronous($productSet: ProductSetInput!, $synchronous: Boolean!) {
+                    productSet(synchronous: true, input: $productSet) {
                         product {
                             id
                         }
+                        productSetOperation {
+                            id
+                            status
+                            userErrors {
+                                code
+                                field
+                                message
+                            }
+                        }
                         userErrors {
+                            code
                             field
                             message
                         }
@@ -212,7 +213,18 @@ export const handler: Handler = async (event) => {
                 }
             `;
 
-            const mediaResponse = await fetch(
+            const productSetInput = {
+                id: product.id,
+                media: [
+                    {
+                        mediaContentType: "FILE",
+                        alt: "3D Model",
+                        originalSource: fileCdnUrl
+                    }
+                ]
+            };
+
+            const productSetResponse = await fetch(
                 `https://${shop_domain}/admin/api/2024-10/graphql.json`,
                 {
                     method: 'POST',
@@ -220,16 +232,16 @@ export const handler: Handler = async (event) => {
                         'Content-Type': 'application/json',
                         'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN,
                     },
-                    body: JSON.stringify({ query: productUpdateMutation }),
+                    body: JSON.stringify({ query: productSetMutation, variables: { productSet: productSetInput } }),
                 }
             );
 
-            const mediaData = await mediaResponse.json();
+            const productSetData = await productSetResponse.json();
 
-            if (mediaData.errors || mediaData.data.productUpdate.userErrors.length > 0) {
+            if (productSetData.errors || productSetData.data.productSet.userErrors.length > 0) {
                 console.error(
                     `Failed to attach media to product ${product.id}:`,
-                    mediaData.errors || mediaData.data.productUpdate.userErrors
+                    productSetData.errors || productSetData.data.productSet.userErrors
                 );
             } else {
                 console.log(`Successfully attached media to product ${product.id}`);
