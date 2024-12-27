@@ -186,8 +186,6 @@ export const handler: Handler = async (event) => {
             console.log('File uploaded to Shopify Files successfully. Retrieving CDN URL...');
             const fileCdnUrl = stagedTarget.resourceUrl;
 
-
-            console.log('fileCdnUrl', fileCdnUrl)
             // Step 3: Attach uploaded media to product using productSet
             const productSetMutation = `
                 mutation createProductAsynchronous($productSet: ProductSetInput!, $synchronous: Boolean!) {
