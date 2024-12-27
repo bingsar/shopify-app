@@ -222,7 +222,7 @@ const Dashboard = () => {
         });
 
         if (!response.ok) {
-            throw new Error('Failed to delete API key');
+            throw new Error('Failed to upload GLB models');
         }
         setLoading(false)
         return response.json();
@@ -277,7 +277,7 @@ const Dashboard = () => {
                         <ImportSkus apiKey={trillionApiKey} shop={shop} />
 
                         <Card>
-                            <Button variant="primary" tone="critical" fullWidth={false} onClick={handleUploadGLB}>
+                            <Button variant="primary" tone="success" fullWidth={false} onClick={handleUploadGLB}>
                                 Upload GLB
                             </Button>
                         </Card>

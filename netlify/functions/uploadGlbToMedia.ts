@@ -15,13 +15,21 @@ export const handler: Handler = async (event) => {
 
         const SHOPIFY_ACCESS_TOKEN = await getShopAuthToken(shop_domain)
 
-        const fetchProductsQuery = `
+        const fetchProductsWithMetafieldsQuery = `
             {
-                products(first: 250, query: "metafields.namespace:trillion metafields.key:sku_exist metafields.value:true") {
+                products(first: 250) {
                     edges {
                         node {
                             id
                             title
+                            metafields(first: 10, namespace: "trillion") {
+                                edges {
+                                    node {
+                                        key
+                                        value
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -36,7 +44,7 @@ export const handler: Handler = async (event) => {
                     'Content-Type': 'application/json',
                     'X-Shopify-Access-Token': SHOPIFY_ACCESS_TOKEN,
                 },
-                body: JSON.stringify({ query: fetchProductsQuery }),
+                body: JSON.stringify({ query: fetchProductsWithMetafieldsQuery }),
             }
         );
 
@@ -45,11 +53,29 @@ export const handler: Handler = async (event) => {
         }
 
         const shopifyProductsData = await shopifyResponse.json();
-        const products = shopifyProductsData.data.products.edges;
 
-        console.log('Products with sku_exist:true', products);
+        const products = shopifyProductsData?.data?.products?.edges;
 
-        for (const productEdge of products) {
+        if (!products) {
+            console.error('No products found');
+            return {
+                statusCode: 404,
+                body: JSON.stringify({ error: 'No products found' }),
+            };
+        }
+
+        const filteredProducts = products.filter((productEdge: any) => {
+            const metafields = productEdge.node.metafields.edges;
+            return metafields.some(
+                (metafield: any) =>
+                    metafield.node.key === 'sku_exist' &&
+                    metafield.node.value === 'true'
+            );
+        });
+
+        console.log('Filtered Products:', filteredProducts);
+
+        for (const productEdge of filteredProducts) {
             const product = productEdge.node;
             const sku = product.variants.edges[0]?.node.sku;
 
